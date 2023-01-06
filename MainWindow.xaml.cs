@@ -103,7 +103,7 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepathS + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepathS.Remove(filepathS.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Downloaded successfully, proceeding with video download...";
                                 MessageBox.Show("Downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
@@ -140,7 +140,7 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepathS + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepathS.Remove(filepathS.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Captions downloaded successfully, proceeding with video download...";
                                 MessageBox.Show("Captions downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
@@ -212,7 +212,7 @@ namespace FilumDLWPF
                                 else
                                 {
                                     statusBar.Text = "Downloading video captions...";
-                                    await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP + ".srt");
+                                    await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
                                     statusBar.Text = "Downloaded successfully, proceeding with video download...";
                                     MessageBox.Show("Downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                                 }
@@ -245,7 +245,7 @@ namespace FilumDLWPF
                                 else
                                 {
                                     statusBar.Text = "Downloading video captions...";
-                                    await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP + ".srt");
+                                    await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
                                     statusBar.Text = "Captions downloaded successfully, proceeding with video download...";
                                 }
                             }
