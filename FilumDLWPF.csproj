@@ -12,6 +12,13 @@
     <VersionPrefix>v</VersionPrefix>
     <PackageIconUrl />
     <PackAsTool>False</PackAsTool>
+    <Copyright>© Blaze Devs 2022-2023. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://filumdlwpf.dynu.com</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/blaze-shubhojeet14/FilumDLWPF</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Title>Filum-DL</Title>
+    <Description>The ultimate GUI file downloader for Windows based on WPF and .NET</Description>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +44,12 @@
     <Resource Include="LogoA.png" />
     <Resource Include="LogoSummer.ico" />
     <Resource Include="LogoSummer.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ffmpeg.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
