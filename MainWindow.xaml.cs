@@ -84,7 +84,7 @@ namespace FilumDLWPF
                         var streamInfos = new IStreamInfo[] { audioStreamInfo, videoStreamInfo };
                         var saveFileDialog = new SaveFileDialog();
                         
-                        saveFileDialog.Filter = "Video Files|*.mp4;";
+                        saveFileDialog.Filter = "Video Files|*.mp4";
                         Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
                         if (filepathDialog == true)
                         {
@@ -97,6 +97,7 @@ namespace FilumDLWPF
                             var trackInfo = trackManifest.TryGetByLanguage("en");
                             if(trackInfo == null)
                             {
+                                MessageBox.Show("No english captions available, proceeding with video download...", "Captions Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
                                 statusBar.Text = "No english captions available, proceeding with video download...";
                             }
                             else
@@ -104,11 +105,12 @@ namespace FilumDLWPF
                                 statusBar.Text = "Downloading video captions...";
                                 await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepathS + ".srt");
                                 statusBar.Text = "Downloaded successfully, proceeding with video download...";
+                                MessageBox.Show("Downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
                         }
 
                         statusBar.Text = "Downloading...";
-                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filepathS + ".mp4").Build());
+                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filepathS).Build());
                         statusBar.Text = "Downloaded Successfully!";
                     }
                     else
@@ -119,7 +121,7 @@ namespace FilumDLWPF
                         var audioStreamInfoA = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                         var streamInfosA = new IStreamInfo[] { audioStreamInfoA, videoStreamInfoA };
                         var saveFileDialog = new SaveFileDialog();
-                        saveFileDialog.Filter = "Video Files|*.mp4;";
+                        saveFileDialog.Filter = "Video Files|*.mp4";
                         Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
                         if (filepathDialog == true)
                         {
@@ -132,21 +134,39 @@ namespace FilumDLWPF
                             var trackInfo = trackManifest.TryGetByLanguage("en");
                             if (trackInfo == null)
                             {
+                                MessageBox.Show("No english captions available, proceeding with video download...", "Captions Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
                                 statusBar.Text = "No english captions available, proceeding with video download...";
                             }
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
                                 await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepathS + ".srt");
-                                statusBar.Text = "Downloaded successfully, proceeding with video download...";
+                                statusBar.Text = "Captions downloaded successfully, proceeding with video download...";
+                                MessageBox.Show("Captions downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
                         }
+                        try
+                        {
+                            statusBar.Text = "Downloading...";
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepathS).Build());
 
-                        statusBar.Text = "Downloading...";
-                        await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepathS + ".mp4").Build());
+                            statusBar.Text = "Downloaded Successfully!";
+                            MessageBox.Show("Downloaded the video successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        catch(NullReferenceException ex)
+                        {
+                            MessageBox.Show("Selected video quality unavilable, changing the resolution to highest video quality...", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                            videoStreamInfoA = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
+                            audioStreamInfoA = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                            streamInfosA = new IStreamInfo[] { audioStreamInfoA, videoStreamInfoA };
 
-                        statusBar.Text = "Downloaded Successfully!";
-                        MessageBox.Show("Downloaded the video successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            statusBar.Text = "Downloading...";
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepathS).Build());
+
+                            statusBar.Text = "Downloaded Successfully!";
+                            MessageBox.Show("Downloaded the video successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        }
                     }
                 }
                 else if (dnType.SelectedItem == Playlist)
@@ -157,7 +177,7 @@ namespace FilumDLWPF
                     saveFileDialog.ValidateNames = false;
                     saveFileDialog.CheckFileExists = false;
                     saveFileDialog.CheckPathExists = true;
-                    saveFileDialog.Filter = "Video Files|*.mp4;";
+                    saveFileDialog.Filter = "Video Files|*.mp4";
                     string filenameP;
                     if(saveFileDialog.ShowDialog() == true)
                     {
@@ -169,8 +189,9 @@ namespace FilumDLWPF
                     await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(PlaylistURL))
                     {
 
-                        filenameP = filenameT + i;
+                        string filenameSeq = filenameT.Remove(filenameT.Length - 4,4) + i;
                         i = i + 1;
+                        filenameP = filenameSeq + ".mp4";
                         var streamsManifest = await youtubeClient.Videos.Streams.GetManifestAsync(videoP.Id);
 
                         if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
@@ -185,6 +206,7 @@ namespace FilumDLWPF
                                 var trackInfo = trackManifest.TryGetByLanguage("en");
                                 if (trackInfo == null)
                                 {
+                                    MessageBox.Show("No english captions available, proceeding with video download...", "Captions Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
                                     statusBar.Text = "No english captions available, proceeding with video download...";
                                 }
                                 else
@@ -192,11 +214,12 @@ namespace FilumDLWPF
                                     statusBar.Text = "Downloading video captions...";
                                     await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP + ".srt");
                                     statusBar.Text = "Downloaded successfully, proceeding with video download...";
+                                    MessageBox.Show("Downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                                 }
                             }
                             statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filenameP + ".mp4").Build());
-                            statusBar.Text = "Downloaded" + filenameP + ".mp4" + " Successfully!";
+                            await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filenameP).Build());
+                            statusBar.Text = "Downloaded " + filenameP + " Successfully!";
                         }
                         else
                         {
@@ -205,6 +228,7 @@ namespace FilumDLWPF
                             var videoStreamInfoA = streamsManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == dlRes);
                             if(videoStreamInfoA == null)
                             {
+
                                 videoStreamInfoA = streamsManifest.GetVideoStreams().GetWithHighestVideoQuality();
                             }
                             var audioStreamInfoA = streamsManifest.GetAudioStreams().GetWithHighestBitrate();
@@ -215,22 +239,40 @@ namespace FilumDLWPF
                                 var trackInfo = trackManifest.TryGetByLanguage("en");
                                 if (trackInfo == null)
                                 {
+                                    MessageBox.Show("No english captions available, proceeding with video download...", "Captions Unavailable", MessageBoxButton.OK, MessageBoxImage.Information);
                                     statusBar.Text = "No english captions available, proceeding with video download...";
                                 }
                                 else
                                 {
                                     statusBar.Text = "Downloading video captions...";
                                     await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP + ".srt");
-                                    statusBar.Text = "Downloaded successfully, proceeding with video download...";
+                                    statusBar.Text = "Captions downloaded successfully, proceeding with video download...";
                                 }
                             }
-                            statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP + ".mp4").Build());
-                            statusBar.Text = "Downloaded " + filenameP + ".mp4" + " Successfully!";
+                            try
+                            {
+                                statusBar.Text = "Downloading...";
+                                await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
+                                statusBar.Text = "Downloaded " + filenameP + " Successfully!";
+                                MessageBox.Show("Downloaded " + filenameP + " successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            }
+                            catch (NullReferenceException)
+                            {
+                                MessageBox.Show("Selected video quality unavilable, changing the resolution to highest video quality...", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                                videoStreamInfoA = streamsManifest.GetVideoStreams().GetWithHighestVideoQuality();
+                                audioStreamInfoA = streamsManifest.GetAudioStreams().GetWithHighestBitrate();
+                                streamInfosA = new IStreamInfo[] { audioStreamInfoA, videoStreamInfoA };
+
+                                statusBar.Text = "Downloading...";
+                                await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
+
+                                statusBar.Text = "Downloaded Successfully!";
+                                MessageBox.Show("Downloaded the video successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            }
                         }
                     }
-                    MessageBox.Show("Downloaded the playlist successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
+                    MessageBox.Show("Downloaded the playlist successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);           
                     statusBar.Text = "Downloaded the playlist successfully!";
 
                 }
@@ -238,12 +280,14 @@ namespace FilumDLWPF
             catch(YoutubeExplode.Exceptions.YoutubeExplodeException ex)
             {
                 statusBar.Text = ex.Message;
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch(Exception ex)
             {
                 statusBar.Text = ex.Message;
-                Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                Application.Current.Shutdown();
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                //Application.Current.Shutdown();
             }
         }
 

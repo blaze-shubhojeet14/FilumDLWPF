@@ -8,7 +8,10 @@
     <Company>Blaze Devs</Company>
     <Authors>Blaze Devs</Authors>
     <PackageIcon>LogoSummerB.ico</PackageIcon>
+    <Version>1.0.5</Version>
+    <VersionPrefix>v</VersionPrefix>
     <PackageIconUrl />
+    <PackAsTool>False</PackAsTool>
   </PropertyGroup>
 
   <ItemGroup>
