@@ -5,32 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.1.0 - The ultimate downloader for your needs!" Height="450" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.1.5 - The ultimate downloader for your needs!" Height="450" Width="800" ResizeMode="NoResize"
         Icon="/LogoSummer.ico"
         Background="Aqua"
         
        >
     <Grid Margin="0,-32,-60,0">
-        <Label Content="Filum-DL" HorizontalContentAlignment="Center" Foreground="Black" Background="Aqua" HorizontalAlignment="Left" FontSize="20px" Margin="339,0,0,375" VerticalAlignment="Bottom" Height="41" Width="146" RenderTransformOrigin="0.527,0.589"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="429*"/>
+            <RowDefinition Height="31*"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Filum-DL" HorizontalContentAlignment="Center" Foreground="Black" Background="Aqua" HorizontalAlignment="Left" FontSize="20px" Margin="339,0,0,339" VerticalAlignment="Bottom" Height="41" Width="146" RenderTransformOrigin="0.527,0.589"/>
         <Label Content="Download Platform: " FontSize="15px" HorizontalAlignment="Left" Margin="5,81,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
-        <ComboBox Margin="150,79,136,333" Name="dnPlatform" Uid="dnPlatform">
+        <ComboBox Margin="150,79,136,297" Name="dnPlatform" Uid="dnPlatform">
             <ComboBoxItem Content="Choose the download platform..." IsEnabled="False" IsSelected="True"/>
             <ComboBoxItem Content="YouTube" IsEnabled="True" Selected="ListBoxYT_Selected" />
+
         </ComboBox>
         <Label Content="Download Type: " Visibility="Hidden" Name="dnTypeLabel" FontSize="15px" HorizontalAlignment="Left" Margin="28,134,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
-        <ComboBox Margin="152,132,136,278" Visibility="Hidden" Name="dnType" Uid="dnType">
+        <ComboBox Margin="152,132,136,242" Visibility="Hidden" Name="dnType" Uid="dnType">
             <ComboBoxItem Content="Choose the download type..." IsEnabled="False" IsSelected="True" />
             <ComboBoxItem Content="Video" IsEnabled="True" Selected="ListBoxVideo_Selected" Name="Video" />
             <ComboBoxItem Content="Playlist" IsEnabled="True" Selected="ListBoxPlaylist_Selected" Name="Playlist" />
         </ComboBox>
         <Label Content="Selection URL:" Name="dnURILabel"  Visibility="Hidden" FontSize="15px" Margin="33,186,692,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51"/>
-        <TextBox HorizontalAlignment="Left" TextChanged="dnURI_TextChanged" Visibility="Hidden"  TextAlignment="Justify" Margin="151,0,0,222" Name="dnURI" TextWrapping="Wrap" Width="574" Height="42" VerticalAlignment="Bottom"/>
+        <TextBox HorizontalAlignment="Left" TextChanged="dnURI_TextChanged" Visibility="Hidden"  TextAlignment="Justify" Margin="151,0,0,186" Name="dnURI" TextWrapping="Wrap" Width="574" Height="42" VerticalAlignment="Bottom"/>
         <Label Name="placeholder" Content="Enter the selection URL..." Visibility="Hidden" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="149,175,0,0" VerticalAlignment="Top" Background="Transparent" Opacity="0.5" Width="574"/>
 
-        <CheckBox Content="Do you want to download selection captions too?"  Visibility="Hidden" Name="dnCC" FontSize="15px" HorizontalAlignment="Left" Margin="150,282,0,0" VerticalAlignment="Top"/>
-        <Button Content="Download" FontSize="18px" Name="dnButton"  Visibility="Hidden" Click="dnButton_Click" HorizontalAlignment="Left" Margin="244,308,0,0" VerticalAlignment="Top" Height="47" Width="264"/>
-        <Label Content="Download Resolution: " Name="dnResLabel"  Visibility="Hidden" FontSize="15px" HorizontalAlignment="Left" Margin="1,235,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
-        <ComboBox Margin="153,234,133,177" x:Name="dnRes"  Visibility="Hidden"  SelectionChanged="dnRes_SelectionChanged">
+        <CheckBox Content="Do you want to download selection captions too?" Visibility="Hidden"  Name="dnCC" FontSize="15px" HorizontalAlignment="Left" Margin="195,323,0,0" VerticalAlignment="Top"/>
+        <Button Content="Download" FontSize="18px" Name="dnButton" Visibility="Hidden"   Click="dnButton_Click" HorizontalAlignment="Left" Margin="244,346,0,0" VerticalAlignment="Top" Height="47" Width="264"/>
+        <Label Content="Download Resolution:" Name="dnResLabel" Visibility="Hidden"   FontSize="15px" HorizontalAlignment="Left" Margin="1,235,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
+        <ComboBox Margin="153,234,133,141" Name="dnRes" Visibility="Hidden">
             <ComboBoxItem Content="Choose the download resolution..." IsEnabled="False" IsSelected="True" Name="dnResDef"/>
             <ComboBoxItem Content="144p"  IsEnabled="True" />
             <ComboBoxItem Content="240p" IsEnabled="True" />
@@ -42,10 +48,15 @@
             <ComboBoxItem Content="2160p" IsEnabled="True" />
             <ComboBoxItem Content="Highest Video Quality" IsEnabled="True" />
         </ComboBox>
-        <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,359,0,0" VerticalAlignment="Top" Width="121"/>
-        <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,394,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726"/>
-
-
+        <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,372,0,0" VerticalAlignment="Top" Width="121"/>
+        <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,401,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726" Grid.RowSpan="2"/>
+        <Label Content="Download Options:" Name="dnOptsLabel" Visibility="Hidden" FontSize="15px" HorizontalAlignment="Left" Margin="14,285,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
+        <ComboBox Margin="153,281,133,94" Name="dnOpts" Visibility="Hidden" SelectionChanged="dnOpts_SelectionChanged">
+            <ComboBoxItem Content="Choose the download option..." IsEnabled="False" IsSelected="True" x:Name="dnResDef1"/>
+            <ComboBoxItem Content="Audio Only" Name="audioOnly"  IsEnabled="True" />
+            <ComboBoxItem Content="Video Only" Name="videoOnly" IsEnabled="True" />
+            <ComboBoxItem Content="Video and Audio" Name="audioVideo" IsEnabled="True" />
+        </ComboBox>
 
     </Grid>
 </Window>

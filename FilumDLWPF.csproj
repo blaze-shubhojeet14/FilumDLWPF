@@ -2,13 +2,12 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>LogoSummerB.ico</ApplicationIcon>
     <Company>Blaze Devs</Company>
-    <Authors>Blaze Devs</Authors>
+    <Authors>Shubhojeet Choudhury, Blaze Devs</Authors>
     <PackageIcon>LogoSummerB.ico</PackageIcon>
-    <Version>1.1.0</Version>
+    <Version>1.1.5</Version>
     <VersionPrefix>v</VersionPrefix>
     <PackageIconUrl />
     <PackAsTool>False</PackAsTool>
@@ -19,6 +18,18 @@
     <Title>Filum-DL</Title>
     <Description>The ultimate GUI file downloader for Windows based on WPF and .NET</Description>
     <NeutralLanguage>en</NeutralLanguage>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,6 +60,14 @@
   <ItemGroup>
     <None Update="ffmpeg.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
