@@ -1,6 +1,5 @@
 # Filum-DL
 An advanced file downloader with multiple supported platforms based on .NET!
-
 # Credits
 - Program developed by Shubhojeet Choudhury & Team Blaze Devs
 - Logo designed by Shubhojeet Choudhury
