@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32407.337
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilumDLWPF", "FilumDLWPF.csproj", "{45352779-43B5-4342-A818-D4A43D070025}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilumDLWPF", "FilumDLWPF.csproj", "{45352779-43B5-4342-A818-D4A43D070025}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8C95E4EF-1365-4F6B-AAA7-E2A6E67B0F31}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
