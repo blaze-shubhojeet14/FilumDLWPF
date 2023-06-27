@@ -6,16 +6,8 @@ using YoutubeExplode;
 using YoutubeExplode.Converter;
 using YoutubeExplode.Videos.Streams;
 using Microsoft.Win32;
-using System.IO;
-using AngleSharp.Io;
-using System.Net.Http;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 using YoutubeExplode.Exceptions;
-//using DotNetTools.SharpGrabber.Instagram;
-//using DotNetTools.SharpGrabber;
-//using DotNetTools.SharpGrabber.Converter;
-//using DotNetTools.SharpGrabber.Grabbed;
 
 namespace FilumDLWPF
 {
@@ -36,7 +28,8 @@ namespace FilumDLWPF
             VideoOnly = 2
         }
         
-        //public IMultiGrabber grabber = GrabberBuilder.New().UseDefaultServices().AddHls().AddYouTube().AddVimeo().AddInstagram().Build();
+        
+        public string regexPattern = @"(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|v\/|embed\/|playlist\?(?:.*&)?list=|user\/\w+\/playlist\/)|youtu\.be\/|youtube.com\/shorts\/)([a-zA-Z0-9-_]+)";
 
         public string DownloadFormatSet()
         {
@@ -98,6 +91,50 @@ namespace FilumDLWPF
             else if (ccLang.SelectedItem == ru)
             {
                 return "ru";
+            }
+            else if(ccLang.SelectedItem == ar)
+            {
+                return "ar";
+            }
+            else if(ccLang.SelectedItem == pt)
+            {
+                return "pt";
+            }
+            else if(ccLang.SelectedItem == tr)
+            {
+                return "tr";
+            }
+            else if(ccLang.SelectedItem == vi)
+            {
+                return "vi";
+            }
+            else if(ccLang.SelectedItem == pl)
+            {
+                return "pl";
+            }
+            else if(ccLang.SelectedItem == no)
+            {
+                return "no";
+            }
+            else if(ccLang.SelectedItem == ml)
+            {
+                return "ml";
+            }
+            else if(ccLang.SelectedItem == it)
+            {
+                return "it";
+            }
+            else if(ccLang.SelectedItem == id)
+            {
+                return "id";
+            }
+            else if(ccLang.SelectedItem == gu)
+            {
+                return "gu";
+            }
+            else if(ccLang.SelectedItem == asa)
+            {
+                return "as";
             }
             else
             {
@@ -775,39 +812,45 @@ namespace FilumDLWPF
         }
         private void dnButton_Click(object sender, RoutedEventArgs e)
         {
-            string dlURL = dnURI.Text;
+            var regex = new Regex(regexPattern);
+            var match = regex.Match(dnURI.Text);
+            if (match.Success)
+            {
+                string videoId = match.Groups[1].Value;
+            }
+            string dlId = match.Groups[1].Value;
             try
             {
                     if (dnType.SelectedItem == Video)
                     {
                         if (audioVideo.IsSelected == true)
                         {
-                            YTVideoDownloadAsync(dlURL, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet());
+                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet());
                         }
                         else if (audioOnly.IsSelected == true)
                         {
-                            YTVideoDownloadAsync(dlURL, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet());
 
                         }
                         else if (videoOnly.IsSelected == true)
                         {
-                            YTVideoDownloadAsync(dlURL, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTVideoDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet());
                         }
                     }
                     else if (dnType.SelectedItem == Playlist)
                     {
                         if (audioVideo.IsSelected == true)
                         {
-                        YTPlaylistDownloadAsync(dlURL, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet());
+                        YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet());
                     }
                         else if (audioOnly.IsSelected == true)
                         {
-                            YTPlaylistDownloadAsync(dlURL, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet());
 
                         }
                         else if (videoOnly.IsSelected == true)
                         {
-                            YTPlaylistDownloadAsync(dlURL, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet());
                         }
                     }
 
@@ -841,10 +884,24 @@ namespace FilumDLWPF
                 {
                     placeholder.Visibility = Visibility.Visible;
                 }
-                dnResLabel.Content = "Video Resolution:";
-                dnResDef.Content = "Choose the video resolution...";
-                dnResLabel.Visibility = Visibility.Visible;
-                dnRes.Visibility = Visibility.Visible;
+                string regexPattern = @"(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|v\/|embed\/|shorts\/)|youtu\.be\/|youtube.com\/shorts\/)([a-zA-Z0-9-_]+)";
+                var regex = new Regex(regexPattern);
+                var match = regex.Match(dnURI.Text);
+                if (match.Success)
+                {
+                    dnResLabel.Content = "Video Resolution:";
+                    dnResDef.Content = "Choose the video resolution...";
+                    dnResLabel.Visibility = Visibility.Visible;
+                    dnRes.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    dnResLabel.Content = "Video Resolution:";
+                    dnResDef.Content = "Choose the video resolution...";
+                    dnResLabel.Visibility = Visibility.Hidden;
+                    dnRes.Visibility = Visibility.Hidden;
+                }
+                
             }
             else if (dnType.SelectedItem == Playlist)
             {
@@ -856,10 +913,25 @@ namespace FilumDLWPF
                 {
                     placeholder.Visibility = Visibility.Visible;
                 }
-                dnResLabel.Content = "Playlist Resolution:";
-                dnResDef.Content = "Choose the playlist videos resolution...";
-                dnResLabel.Visibility = Visibility.Visible;
-                dnRes.Visibility = Visibility.Visible;
+                string regexPattern = @"(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:playlist\?(?:.*&)?list=|embed\/|user\/\w+\/playlist\/)|youtu\.be\/)([a-zA-Z0-9-_]+)";
+
+                var regex = new Regex(regexPattern);
+                var match = regex.Match(dnURI.Text);
+                if (match.Success)
+                {
+                    dnResLabel.Content = "Playlist Resolution:";
+                    dnResDef.Content = "Choose the playlist videos resolution...";
+                    dnResLabel.Visibility = Visibility.Visible;
+                    dnRes.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    dnResLabel.Content = "Playlist Resolution:";
+                    dnResDef.Content = "Choose the playlist videos resolution...";
+                    dnResLabel.Visibility = Visibility.Hidden;
+                    dnRes.Visibility = Visibility.Hidden;
+                }
+                
             }
         }
         private void dnOpts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1039,11 +1111,6 @@ namespace FilumDLWPF
         private void ccLang_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             dnButton.Visibility = Visibility.Visible;
-        }
-
-        private void dnCC_Unchecked(object sender, RoutedEventArgs e)
-        {
-            
         }
     }
 }

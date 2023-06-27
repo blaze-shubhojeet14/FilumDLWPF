@@ -22,9 +22,25 @@ namespace FilumDLWPF
         }
         private void exBtn_Click(object sender, RoutedEventArgs e)
         {
-            YTWindow yTWindow = new YTWindow();
-            yTWindow.Show();
-            this.Close();
+            if(exType.SelectedItem == YouTube)
+            {
+                YTWindow yTWindow = new YTWindow();
+                yTWindow.Show();
+                this.Close();
+            }
+
+            else if(exType.SelectedItem == Spotify)
+            {
+                SpotWindow spotWindow = new SpotWindow();
+                spotWindow.Show();
+                this.Close();
+            }
+        }
+
+
+        private void Spotify_Selected(object sender, RoutedEventArgs e)
+        {
+            exBtn.Visibility = Visibility.Visible;
         }
     }
 }

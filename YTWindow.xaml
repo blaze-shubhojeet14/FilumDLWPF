@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.3.0 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.4.0 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
         Icon="/LogoSummer.ico"
         Background="Aqua"
         >
@@ -29,7 +29,7 @@
         <TextBox HorizontalAlignment="Left" TextChanged="dnURI_TextChanged" Visibility="Hidden" TextAlignment="Justify" Margin="152,128,0,0" Name="dnURI" TextWrapping="Wrap" Width="574" Height="38" VerticalAlignment="Top"/>
         <Label Name="placeholder" FontSize="12px" Content="Enter the selection URL..." Visibility="Hidden"  HorizontalAlignment="Left" IsHitTestVisible="False" Margin="150,127,0,0" VerticalAlignment="Top" Background="Transparent" Opacity="0.5" Width="574"/>
 
-        <CheckBox Content="Do you want to download selection captions too?" Visibility="Hidden" Checked="dnCC_Checked" Unchecked="dnCC_Unchecked"  Name="dnCC" FontSize="15px" HorizontalAlignment="Left" Margin="195,319,0,0" VerticalAlignment="Top" Width="362"/>
+        <CheckBox Content="Do you want to download selection captions too?" Visibility="Hidden" Checked="dnCC_Checked" Name="dnCC" FontSize="15px" HorizontalAlignment="Left" Margin="195,319,0,0" VerticalAlignment="Top" Width="362"/>
 
         <Button Content="Download" FontSize="18px" Name="dnButton" Visibility="Hidden" Click="dnButton_Click" HorizontalAlignment="Left" Margin="244,347,0,0" VerticalAlignment="Top" Height="47" Width="264"/>
         <Label Content="Download Resolution:" Name="dnResLabel" Visibility="Hidden"  FontSize="15px" HorizontalAlignment="Left" Margin="10,181,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
@@ -57,16 +57,27 @@
 
         <ComboBox HorizontalAlignment="Left" Name="ccLang" SelectionChanged="ccLang_SelectionChanged" Visibility="Hidden" Height="30" Margin="516,316,0,0" VerticalAlignment="Top" Width="186">
             <ComboBoxItem Content="Select Captions Language..." IsEnabled="False" IsSelected="True"></ComboBoxItem>
-            <ComboBoxItem Content="English" Name="en" IsEnabled="True"></ComboBoxItem>
-            <ComboBoxItem Content="Chinese" Name="zh" IsEnabled="True"></ComboBoxItem>
-            <ComboBoxItem Content="Japanese" Name="ja" IsEnabled="True"></ComboBoxItem>
-            <ComboBoxItem Content="German" Name="de" IsEnabled="True"></ComboBoxItem>
-            <ComboBoxItem Content="French" Name="fr" IsEnabled="True"></ComboBoxItem>
-            <ComboBoxItem Content="Russian" Name="ru" IsEnabled="True"></ComboBoxItem>
-            <ComboBoxItem Content="Hindi" Name="hi" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Arabic" Name="ar" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Assamese" Name="asa" IsEnabled="True"></ComboBoxItem>
             <ComboBoxItem Content="Bengali" Name="bn" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Chinese" Name="zh" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="English" Name="en" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="French" Name="fr" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="German" Name="de" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Gujarati" Name="gu" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Hindi" Name="hi" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Indonesian" Name="id" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Italian" Name="it" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Japanese" Name="ja" IsEnabled="True"></ComboBoxItem>
             <ComboBoxItem Content="Korean" Name="ko" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Malayalam" Name="ml" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Norwegian" Name="no" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Polish" Name="pl" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Portuguese" Name="pt" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Russian" Name="ru" IsEnabled="True"></ComboBoxItem>
             <ComboBoxItem Content="Spanish" Name="es" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Turkish" Name="tr" IsEnabled="True"></ComboBoxItem>
+            <ComboBoxItem Content="Vietnamese" Name="vi" IsEnabled="True"></ComboBoxItem>
         </ComboBox>
         <Label Content="File Format: " Visibility="Hidden" Name="ffInfoLabel" FontSize="15px" HorizontalAlignment="Left" Margin="49,271,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
         <ComboBox Margin="153,272,133,103" x:Name="ffInfoOpts" Visibility="Hidden"  SelectionChanged="ffInfoOpts_SelectionChanged">

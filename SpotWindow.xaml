@@ -1,0 +1,45 @@
+﻿<Window x:Class="FilumDLWPF.SpotWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FilumDLWPF"
+        mc:Ignorable="d"
+        Title="Filum-DL Application v1.4.0 - Spotify Downloader" Height="450" Width="800" ResizeMode="NoResize"
+        Icon="/LogoSummer.ico"
+        Background="Aqua"
+        >
+    <!--<Window.Background>
+        <ImageBrush ImageSource="Images\bg.jpg" />
+    </Window.Background>-->
+    <Grid Margin="0,-32,-60,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="429*"/>
+            <RowDefinition Height="31*"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Filum-DL Spotify Downloader" HorizontalContentAlignment="Center" FontWeight="Bold" Foreground="Black" Background="Aqua" HorizontalAlignment="Left" FontSize="20px" Margin="251,0,0,336" VerticalAlignment="Bottom" Height="41" Width="321" RenderTransformOrigin="0.527,0.589"/>
+        <Label Content="Download Type: " Visibility="Visible" Name="dnTypeLabel" FontSize="15px" HorizontalAlignment="Left" Margin="28,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
+        <ComboBox Margin="152,78,136,289" Visibility="Visible" Name="dnType" SelectionChanged="dnType_SelectionChanged" Uid="dnType">
+            <ComboBoxItem Content="Choose the download type..." IsEnabled="False" IsSelected="True" />
+            <ComboBoxItem Content="Song" IsEnabled="True" Name="Song" />
+            <ComboBoxItem Content="Album" IsEnabled="True" Name="Album" />
+            <ComboBoxItem Content="Playlist" IsEnabled="True" Name="Playlist" />
+        </ComboBox>
+        <Label Content="Selection URL:" Name="dnURILabel" FontSize="15px" Visibility="Hidden" Margin="33,167,692,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51"/>
+        <TextBox HorizontalAlignment="Left" TextChanged="dnURI_TextChanged" Visibility="Hidden" TextAlignment="Justify" Margin="152,170,0,0" Name="dnURI" TextWrapping="Wrap" Width="574" Height="38" VerticalAlignment="Top"/>
+        <Label Name="placeholder" FontSize="12px" Visibility="Hidden"  Content="Enter the selection URL..."  HorizontalAlignment="Left" IsHitTestVisible="False" Margin="150,168,0,0" VerticalAlignment="Top" Background="Transparent" Opacity="0.5" Width="574"/>
+
+        <Button Content="Download" FontSize="18px" Name="dnButton" Visibility="Hidden" Click="dnButton_Click" HorizontalAlignment="Left" Margin="235,337,0,0" VerticalAlignment="Top" Height="51" Width="337"/>
+
+        <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,372,0,0" VerticalAlignment="Top" Width="121"/>
+        <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,401,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726" Grid.RowSpan="2"/>
+
+        <Label Content="File Format: " Name="ffInfoLabel" Visibility="Hidden"  FontSize="15px" HorizontalAlignment="Left" Margin="49,249,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
+        <ComboBox Margin="153,248,133,116" x:Name="ffInfoOpts" Visibility="Hidden"  SelectionChanged="ffInfoOpts_SelectionChanged">
+            <ComboBoxItem Content="Choose the preferred file format for the download..." IsEnabled="False" IsSelected="True"/>
+            <ComboBoxItem Content="MP3" x:Name="FFmp3" IsEnabled="True" />
+        </ComboBox>
+        
+    </Grid>
+</Window>

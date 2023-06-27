@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.3.0 - The ultimate downloader for your needs!" Height="450" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.4.0 - The ultimate downloader for your needs!" Height="450" Width="800" ResizeMode="NoResize"
         Icon="/LogoSummer.ico"
         Background="Aqua"
         >
@@ -17,7 +17,8 @@
         </Grid.RowDefinitions>
         <ComboBox HorizontalAlignment="Left" Visibility="Visible" FontSize="20px" Margin="106,213,0,0" Name="exType" VerticalAlignment="Top" Width="571" RenderTransformOrigin="0.577,-0.89" Height="56" >
             <ComboBoxItem Content="Choose your media platform... " IsSelected="True" IsEnabled="False"></ComboBoxItem>
-            <ComboBoxItem Content="  YouTube" Selected="YT_Selected"></ComboBoxItem>
+            <ComboBoxItem Content="  YouTube" Name="YouTube" Selected="YT_Selected"></ComboBoxItem>
+            <ComboBoxItem Content="  Spotify" Name="Spotify" Selected="Spotify_Selected"></ComboBoxItem>
         </ComboBox>
         <Label Content="Media Platform&#xD;&#xA;" HorizontalAlignment="Left" FontSize="30px" Margin="250,145,0,0" VerticalAlignment="Top" Height="96" Width="298"/>
         <Button Content="Begin" Visibility="Hidden" HorizontalAlignment="Left" Click="exBtn_Click" FontSize="25px" Name="exBtn" Margin="272,294,0,0" VerticalAlignment="Top" Height="65" Width="224"/>
