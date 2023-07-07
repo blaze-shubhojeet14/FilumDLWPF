@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using SpotifyAPI.Web;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -9,6 +10,7 @@ using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Converter;
 using YoutubeExplode.Videos.Streams;
+using static FilumDLWPF.FolderPicker;
 
 namespace FilumDLWPF
 {
@@ -20,6 +22,7 @@ namespace FilumDLWPF
         public SpotWindow()
         {
             InitializeComponent();
+
         }
         public string SpotifyID { get; set; }
         
@@ -86,7 +89,7 @@ namespace FilumDLWPF
             string clientSecret = secrets.SetSpotifyClientSecret();
             return clientSecret;
         }
-        public async void GetTrack(string clientID, string clientSecret, string ID, SpotifyType spotifyType, string fileFormat)
+        public async void GetMultipleTracks(string clientID, string clientSecret, string ID, SpotifyType spotifyType, string fileFormat)
         {
             //Authentication
             var config = SpotifyClientConfig.CreateDefault();
@@ -104,135 +107,158 @@ namespace FilumDLWPF
             //YouTube Client Configuration
             var youtube = new YoutubeClient();
             
-            //Get song metada
-            var track = await spotify.Tracks.Get(ID);
-            string song = track.Name;
-            string artist = track.Artists[0].Name;
-
-            statusBar.Text = "Retrieving Track...";
-            //YouTube song search and download
-            var result = await youtube.Search.GetVideosAsync(artist + " - " + song);
-            string videoID = result.First().Id;
-
-            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoID);
-            var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
-            var streamInfo = new IStreamInfo[] { audioStream };
-
-            var saveFileDialog = new SaveFileDialog();
-            if (fileFormat == ".mp3")
-            {
-                saveFileDialog.Filter = "MP3 files (*.mp3)|*.mp3";
-            }
-            else
-            {
-                saveFileDialog.Filter = "MP3 files (*.mp3)|*.mp3";
-            }
-            
-            Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-
-            if (filepathDialog == true)
-            {
-                string filepath = saveFileDialog.FileName;
-            }
-            string filepathS = saveFileDialog.FileName;
-
-            //Download Logic Depending on SpotifyType
-
+            //Get song metadata
             if(spotifyType == SpotifyType.Track)
             {
+                var track = await spotify.Tracks.Get(ID);
+                string song = track.Name;
+                string artist = track.Artists[0].Name;
+                string album = track.Album.Name;
+                MessageBox.Show($"Track Name : {song} \nArtist : {artist} \nAlbum : {album} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                statusBar.Text = "Retrieving Track...";
+                //YouTube song search and download
+                var result = await youtube.Search.GetVideosAsync(artist + " - " + song);
+                string videoID = result.First().Id;
+
+                var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoID);
+                var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                var streamInfo = new IStreamInfo[] { audioStream };
+
+                var dlg = new FolderPicker();
+                dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dlg.ShowDialog() == true)
+                {
+                    string filepath = dlg.ResultPath;
+                }
+             
+                string filepathS = $"{dlg.ResultPath}\\{artist}{song}{fileFormat}";
+
                 statusBar.Text = "Downloading...";
                 await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathS).Build());
-                statusBar.Text = "Downloaded " + song +  " Successfully!";
-                MessageBox.Show("Downloaded " + song + " successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+                statusBar.Text = $"Downloaded  {song} Successfully!";
+                MessageBox.Show($"Downloaded {song} successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            else if(spotifyType == SpotifyType.Playlist)
-            {
-                statusBar.Text = "Downloading the playlist...";
-                await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathS).Build());
-                statusBar.Text = "Downloaded " + song + " Successfully!";
-                MessageBox.Show("Downloaded " + song + " successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            
-            
             else if(spotifyType == SpotifyType.Album)
             {
-                statusBar.Text = "Downloading the album...";
-                await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathS).Build());
-                statusBar.Text = "Downloaded " + song + " Successfully!";
-                MessageBox.Show("Downloaded " + song +  " Successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+                //Get album
+                var album = await spotify.Albums.Get(ID);
+                var albumName = album.Name;
+                var artistA = album.Artists[0].Name;
+
+                statusBar.Text = "Retrieving Album Tracks...";
+
+                MessageBox.Show($"Album Name : {albumName} \nArtist : {artistA} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
+                var dlg = new FolderPicker();
+                dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if(dlg.ShowDialog() == true)
+                {
+                    string filepath = dlg.ResultPath;
+                }
+                string filepathS = dlg.ResultPath;
+
+                foreach (SimpleTrack item in album.Tracks.Items)
+                {
+                    var track = await spotify.Tracks.Get(item.Id);
+                    string song = track.Name;
+                    string artist = track.Artists[0].Name;
+                    string albumA = track.Album.Name;
+                    string filepathD = $"{filepathS}\\{artist} - {song}{fileFormat}";
+                    MessageBox.Show($"Track Name : {song} \nArtist : {artist} \nAlbum : {albumName} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    statusBar.Text = "Retrieving Track...";
+                    //YouTube song search and download
+                    var result = await youtube.Search.GetVideosAsync(artist + " - " + song);
+                    string videoID = result.First().Id;
+
+                    var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoID);
+                    var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                    var streamInfo = new IStreamInfo[] { audioStream };
+
+                    statusBar.Text = "Downloading...";
+                    await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
+                    statusBar.Text = $"Downloaded {song} from {albumName} Successfully!";
+                    MessageBox.Show($"Downloaded {song} from {albumName} successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                statusBar.Text = $"Downloaded the album {albumName} successfully!";
+                MessageBox.Show($"Downloaded the album {albumName} Successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             
-
-        }
-        public async void GetAlbum(string clientID, string clientSecret, string ID)
-        {
-            //Authentication
-            var config = SpotifyClientConfig.CreateDefault();
-            var request = new ClientCredentialsRequest(clientID, clientSecret);
-            var response = await new OAuthClient(config).RequestToken(request);
-            if (response.IsExpired == true)
+            else if(spotifyType == SpotifyType.Playlist)
             {
-                response = await new OAuthClient(config).RequestToken(request);
-            }
+                //Get playlist
+                var playlist = await spotify.Playlists.Get(ID);
+                var playlistName = playlist.Name;
+                var playlistAuthor = playlist.Owner;
 
-            //Spotify client configuration
-            var spotify = new SpotifyClient(config.WithToken(response.AccessToken));
-            statusBar.Text = "Spotify client has been authenticated successfully";
+                statusBar.Text = "Retrieving Playlist Tracks...";
 
-            //Get album
-            var album = await spotify.Albums.Get(ID);
-            var albumName = album.Name;
+                MessageBox.Show($"Playlist Name: {playlistName} \nPlaylist Owner: {playlistAuthor}", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            statusBar.Text = "Retrieving Album Tracks...";
-            
-            foreach (SimpleTrack item in album.Tracks.Items)
-            {
-                GetTrack(clientID, clientSecret, item.Id, SpotifyType.Album, FileFormatSet());
-            }
-            statusBar.Text = "Downloaded the album " + albumName + " successfully!";
-            MessageBox.Show("Downloaded the album " + albumName  + " Successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
-
-        }
-        public async void GetPlaylist(string clientID, string clientSecret, string ID)
-        {
-            //Authentication
-            var config = SpotifyClientConfig.CreateDefault();
-            var request = new ClientCredentialsRequest(clientID, clientSecret);
-            var response = await new OAuthClient(config).RequestToken(request);
-            if (response.IsExpired == true)
-            {
-                response = await new OAuthClient(config).RequestToken(request);
-            }
-
-            //Spotify client configuration
-            var spotify = new SpotifyClient(config.WithToken(response.AccessToken));
-            statusBar.Text = "Spotify client has been authenticated successfully";
-
-            //Get playlist
-            var playlist = await spotify.Playlists.Get(ID);
-            var playlistName = playlist.Name;
-
-            statusBar.Text = "Retrieving Playlist Tracks...";
-
-            //Get playlist tracks            
-            foreach (PlaylistTrack<IPlayableItem> item in playlist.Tracks.Items)
-            {
-                if (item.Track is FullTrack track)
+                var dlg = new FolderPicker();
+                dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dlg.ShowDialog() == true)
                 {
-                    // All FullTrack properties are available
-                    
-                    GetTrack(clientID, clientSecret, track.Id, SpotifyType.Playlist, FileFormatSet());
+                    string filepath = dlg.ResultPath;
                 }
-                if (item.Track is FullEpisode episode)
+                string filepathS = dlg.ResultPath;
+
+                //Get playlist tracks            
+                foreach (PlaylistTrack<IPlayableItem> item in playlist.Tracks.Items)
                 {
-                    // All FullTrack properties are available
-                    GetTrack(clientID, clientSecret, episode.Id, SpotifyType.Playlist, FileFormatSet());
+
+                    if (item.Track is FullTrack track)
+                    {
+                        var trackA = await spotify.Tracks.Get(track.Id);
+                        string song = trackA.Name;
+                        string artist = trackA.Artists[0].Name;
+                        string albumA = trackA.Album.Name;
+                        string filepathD = $"{filepathS}\\{artist} - {song}{fileFormat}";
+                        MessageBox.Show($"Track Name : {song} \nArtist : {artist} \nAlbum : {albumA} \nPlaylist : {playlistName} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        statusBar.Text = "Retrieving Track...";
+                        //YouTube song search and download
+                        var result = await youtube.Search.GetVideosAsync(artist + " - " + song);
+                        string videoID = result.First().Id;
+
+                        var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoID);
+                        var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                        var streamInfo = new IStreamInfo[] { audioStream };
+
+                        statusBar.Text = "Downloading...";
+                        await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
+                        statusBar.Text = $"Downloaded {song} from {playlistName} Successfully!";
+                        MessageBox.Show($"Downloaded {song} from {playlistName} successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    if (item.Track is FullEpisode episode)
+                    {
+                        // All FullTrack properties are available
+                        var trackA = await spotify.Episodes.Get(episode.Id);
+                        string episodeName = trackA.Name;
+                        string filepathD = $"{filepathS}\\{episodeName}{fileFormat}";
+                        MessageBox.Show($"Episode Name : {episodeName} \nPlaylist : {playlistName} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        statusBar.Text = "Retrieving Track...";
+                        //YouTube song search and download
+                        var result = await youtube.Search.GetVideosAsync(episodeName);
+                        string videoID = result.First().Id;
+
+                        var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoID);
+                        var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
+                        var streamInfo = new IStreamInfo[] { audioStream };
+
+                        statusBar.Text = "Downloading...";
+                        await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
+                        statusBar.Text = $"Downloaded {episodeName} from {playlistName} Successfully!";
+                        MessageBox.Show($"Downloaded {episodeName} from {playlistName} successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
+                statusBar.Text = $"Downloaded the playlist {playlistName} successfully!";
+                MessageBox.Show($"Downloaded the playlist {playlistName} Successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+
             }
-            statusBar.Text = "Downloaded the playlist " + playlistName + " successfully!";
-            MessageBox.Show("Downloaded the playlist " + playlistName + " Successfully!", "Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
-
-
         }
         private void ffInfoOpts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -274,7 +300,7 @@ namespace FilumDLWPF
                 dnURI.Text = "";
                 placeholder.Visibility = Visibility.Visible;
             }
-            else if (dnType.SelectedItem == Playlist)
+            else if (dnType.SelectedItem == Album)
             {
                 dnURILabel.Content = "Album URL:";
                 placeholder.Content = "Enter the album URL...";
@@ -372,15 +398,15 @@ namespace FilumDLWPF
             {
                 if (dnType.SelectedItem == Song)
                 {
-                    GetTrack(ClientID(), ClientSecret(), dlIdSong, SpotifyType.Track, FileFormatSet());
+                    GetMultipleTracks(ClientID(), ClientSecret(), dlIdSong, SpotifyType.Track, FileFormatSet());
                 }
                 else if (dnType.SelectedItem == Playlist)
                 {
-                    GetPlaylist(ClientID(), ClientSecret(), dlIdPlaylist);
+                    GetMultipleTracks(ClientID(), ClientSecret(), dlIdPlaylist, SpotifyType.Playlist, FileFormatSet());
                 }
                 else if (dnType.SelectedItem == Album)
                 {
-                    GetAlbum(ClientID(), ClientSecret(), dlIdAlbum);
+                    GetMultipleTracks(ClientID(), ClientSecret(), dlIdAlbum, SpotifyType.Album, FileFormatSet());
                 }
             }
             catch(Exception ex)
@@ -388,6 +414,13 @@ namespace FilumDLWPF
                 statusBar.Text = ex.Message;
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void RMM_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();
         }
     }
 }

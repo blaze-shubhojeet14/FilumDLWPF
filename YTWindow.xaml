@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.4.0 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.4.5 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
         Icon="/LogoSummer.ico"
         Background="Aqua"
         >
@@ -29,9 +29,8 @@
         <TextBox HorizontalAlignment="Left" TextChanged="dnURI_TextChanged" Visibility="Hidden" TextAlignment="Justify" Margin="152,128,0,0" Name="dnURI" TextWrapping="Wrap" Width="574" Height="38" VerticalAlignment="Top"/>
         <Label Name="placeholder" FontSize="12px" Content="Enter the selection URL..." Visibility="Hidden"  HorizontalAlignment="Left" IsHitTestVisible="False" Margin="150,127,0,0" VerticalAlignment="Top" Background="Transparent" Opacity="0.5" Width="574"/>
 
-        <CheckBox Content="Do you want to download selection captions too?" Visibility="Hidden" Checked="dnCC_Checked" Name="dnCC" FontSize="15px" HorizontalAlignment="Left" Margin="195,319,0,0" VerticalAlignment="Top" Width="362"/>
+        <CheckBox Content="Do you want to download selection captions too?" Checked="dnCC_Checked" Visibility="Hidden" Name="dnCC" FontSize="15px" HorizontalAlignment="Left" Margin="195,312,0,0" VerticalAlignment="Top" Width="362"/>
 
-        <Button Content="Download" FontSize="18px" Name="dnButton" Visibility="Hidden" Click="dnButton_Click" HorizontalAlignment="Left" Margin="244,347,0,0" VerticalAlignment="Top" Height="47" Width="264"/>
         <Label Content="Download Resolution:" Name="dnResLabel" Visibility="Hidden"  FontSize="15px" HorizontalAlignment="Left" Margin="10,181,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
         <ComboBox Margin="154,180,132,195" Name="dnRes" Visibility="Hidden" SelectionChanged="dnRes_SelectionChanged">
             <ComboBoxItem Content="Choose the download resolution..." IsEnabled="False" IsSelected="True" Name="dnResDef"/>
@@ -45,8 +44,8 @@
             <ComboBoxItem Content="2160p" IsEnabled="True" Name="p2160" />
             <ComboBoxItem Content="Highest Video Quality" Name="MaxQuality" IsEnabled="True" />
         </ComboBox>
-        <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,372,0,0" VerticalAlignment="Top" Width="121"/>
-        <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,401,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726" Grid.RowSpan="2"/>
+        <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,378,0,0" VerticalAlignment="Top" Width="121"/>
+        <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,403,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726" Grid.RowSpan="2"/>
         <Label Content="Download Options:" Name="dnOptsLabel" Visibility="Hidden" FontSize="15px" HorizontalAlignment="Left" Margin="14,230,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
         <ComboBox Margin="153,227,133,148" Name="dnOpts" Visibility="Hidden"  SelectionChanged="dnOpts_SelectionChanged">
             <ComboBoxItem Content="Choose the download option..." IsEnabled="False" IsSelected="True" x:Name="dnResDef1"/>
@@ -55,7 +54,7 @@
             <ComboBoxItem Content="Video and Audio" Name="audioVideo" IsEnabled="True" />
         </ComboBox>
 
-        <ComboBox HorizontalAlignment="Left" Name="ccLang" SelectionChanged="ccLang_SelectionChanged" Visibility="Hidden" Height="30" Margin="516,316,0,0" VerticalAlignment="Top" Width="186">
+        <ComboBox HorizontalAlignment="Left" Name="ccLang" SelectionChanged="cc_SelectionChanged" Visibility="Hidden" Height="30" Margin="516,313,0,0" VerticalAlignment="Top" Width="186">
             <ComboBoxItem Content="Select Captions Language..." IsEnabled="False" IsSelected="True"></ComboBoxItem>
             <ComboBoxItem Content="Arabic" Name="ar" IsEnabled="True"></ComboBoxItem>
             <ComboBoxItem Content="Assamese" Name="asa" IsEnabled="True"></ComboBoxItem>
@@ -86,5 +85,7 @@
             <ComboBoxItem Content="MP3" x:Name="FFmp3" IsEnabled="True" />
             <ComboBoxItem Content="AVI" x:Name="FFavi" IsEnabled="True" />
         </ComboBox>
+        <Button Content="Return To Main Menu" FontSize="18px" x:Name="RMM_Btn" Click="RMM_Btn_Click" HorizontalAlignment="Left" Margin="41,336,0,0" VerticalAlignment="Top" Height="48" Width="338"/>
+        <Button Content="Download" Visibility="Hidden" FontSize="18px" x:Name="dnButton" Click="dnButton_Click" HorizontalAlignment="Left" Margin="404,338,0,0" VerticalAlignment="Top" Height="46" Width="338"/>
     </Grid>
 </Window>

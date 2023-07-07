@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.4.0 - Spotify Downloader" Height="450" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.4.5 - Spotify Downloader" Height="450" Width="800" ResizeMode="NoResize"
         Icon="/LogoSummer.ico"
         Background="Aqua"
         >
@@ -30,7 +30,7 @@
         <TextBox HorizontalAlignment="Left" TextChanged="dnURI_TextChanged" Visibility="Hidden" TextAlignment="Justify" Margin="152,170,0,0" Name="dnURI" TextWrapping="Wrap" Width="574" Height="38" VerticalAlignment="Top"/>
         <Label Name="placeholder" FontSize="12px" Visibility="Hidden"  Content="Enter the selection URL..."  HorizontalAlignment="Left" IsHitTestVisible="False" Margin="150,168,0,0" VerticalAlignment="Top" Background="Transparent" Opacity="0.5" Width="574"/>
 
-        <Button Content="Download" FontSize="18px" Name="dnButton" Visibility="Hidden" Click="dnButton_Click" HorizontalAlignment="Left" Margin="235,337,0,0" VerticalAlignment="Top" Height="51" Width="337"/>
+        <Button Content="Download" FontSize="18px" Name="dnButton" Visibility="Hidden" Click="dnButton_Click" HorizontalAlignment="Left" Margin="392,324,0,0" VerticalAlignment="Top" Height="51" Width="352"/>
 
         <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,372,0,0" VerticalAlignment="Top" Width="121"/>
         <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,401,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726" Grid.RowSpan="2"/>
@@ -40,6 +40,7 @@
             <ComboBoxItem Content="Choose the preferred file format for the download..." IsEnabled="False" IsSelected="True"/>
             <ComboBoxItem Content="MP3" x:Name="FFmp3" IsEnabled="True" />
         </ComboBox>
-        
+        <Button Content="Return To Main Menu" FontSize="18px" Name="RMM_Btn" Click="RMM_Btn_Click" HorizontalAlignment="Left" Margin="41,324,0,0" VerticalAlignment="Top" Height="51" Width="338"/>
+
     </Grid>
 </Window>

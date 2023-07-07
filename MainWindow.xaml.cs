@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,10 +38,33 @@ namespace FilumDLWPF
             }
         }
 
-
         private void Spotify_Selected(object sender, RoutedEventArgs e)
         {
             exBtn.Visibility = Visibility.Visible;
+        }
+
+        private void DevBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = "https://blazedevs.dynu.com/aboutme.html";
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
+        }
+
+        private void WebBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = "https://filumdlwpf.dynu.com";
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
+        }
+
+        private void Surprise_Click(object sender, RoutedEventArgs e)
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = "https://youtu.be/dQw4w9WgXcQ";
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
         }
     }
 }

@@ -8,6 +8,7 @@ using YoutubeExplode.Videos.Streams;
 using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Exceptions;
+using static FilumDLWPF.FolderPicker;
 
 namespace FilumDLWPF
 {
@@ -48,6 +49,46 @@ namespace FilumDLWPF
             else
             {
                 return ".mp4";
+            }
+        }
+        public string DownloadResSet()
+        {
+            var des = dnRes.SelectedItem;
+            if(des == p144)
+            {
+                return "144p";
+            }
+            else if(des == p240)
+            {
+                return "240p";
+            }
+            else if(des == p360)
+            {
+                return "360p";
+            }
+            else if(des == p480)
+            {
+                return "480p";
+            }
+            else if(des == p720)
+            {
+                return "720p";
+            }
+            else if(des == p1080)
+            {
+                return "1080p";
+            }
+            else if(des == p1440)
+            {
+                return "1440p";
+            }
+            else if(des == p2160)
+            {
+                return "2160p";
+            }
+            else
+            {
+                return "1080p";
             }
         }
         public string CCLanguageSet()
@@ -141,38 +182,28 @@ namespace FilumDLWPF
                 return "en";
             }
         }
-        public async void YTVideoDownloadAsync(string dlURL, YTVideoDLType ytdlType, string captionLanguage, string fileFormat)
+        public async void YTVideoDownloadAsync(string dlURL, YTVideoDLType ytdlType, string captionLanguage, string fileFormat, string resFormat)
         {
             var youtubeClient = new YoutubeClient();
+            var video = await youtubeClient.Videos.GetAsync(dlURL);
+            string name = video.Title;
+            string channel = video.Author.ChannelTitle;
+            var dlg = new FolderPicker();
+            dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+            if (dlg.ShowDialog() == true)
+            {
+                string filepath = dlg.ResultPath;
+            }
+            string filepathS = $"{dlg.ResultPath}\\{channel}{name}{fileFormat}";
             var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(dlURL);
             if (ytdlType == YTVideoDLType.AudioAndVideo)
             {
-                if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
+                if (dnRes.SelectedItem == MaxQuality)
                 {
                     var videoStreamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
                     var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                     var streamInfos = new IStreamInfo[] { audioStreamInfo, videoStreamInfo };
-                    var saveFileDialog = new SaveFileDialog();
-
-                    if (fileFormat == ".avi")
-                    {
-                        saveFileDialog.Filter = "AVI Video (*.avi)|*.avi";
-                    }
-                    else if (fileFormat == ".mp4")
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    else
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-
-                    Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-                    if (filepathDialog == true)
-                    {
-                        string filepath = saveFileDialog.FileName;
-                    }
-                    string filepathS = saveFileDialog.FileName;
+      
                     if (dnCC.IsChecked == true)
                     {
                         var trackManifest = await youtubeClient.Videos.ClosedCaptions.GetManifestAsync(dlURL);
@@ -196,31 +227,11 @@ namespace FilumDLWPF
                     statusBar.Text = "Downloaded Successfully!";
                 }
                 else
-                {
-                    string dlRes = dnRes.SelectedItem.ToString();
-                    dlRes = dlRes.Remove(0, 38);
-                    var videoStreamInfoA = streamManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == dlRes);
+                {                  
+                    var videoStreamInfoA = streamManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == resFormat);
                     var audioStreamInfoA = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                     var streamInfosA = new IStreamInfo[] { audioStreamInfoA, videoStreamInfoA };
-                    var saveFileDialog = new SaveFileDialog();
-                    if(fileFormat == ".avi")
-                    {
-                        saveFileDialog.Filter = "AVI Video (*.avi)|*.avi";
-                    }
-                    else if (fileFormat == ".mp4")
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    else
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-                    if (filepathDialog == true)
-                    {
-                        string filepath = saveFileDialog.FileName;
-                    }
-                    string filepathS = saveFileDialog.FileName;
+                    
                     if (dnCC.IsChecked == true)
                     {
                         var trackManifest = await youtubeClient.Videos.ClosedCaptions.GetManifestAsync(dlURL);
@@ -263,26 +274,12 @@ namespace FilumDLWPF
             }
             else if (ytdlType == YTVideoDLType.AudioOnly)
             {
-                if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
+                if (dnRes.SelectedItem == MaxQuality)
                 {
                     var audioStreamInfo = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                     var streamInfos = new IStreamInfo[] { audioStreamInfo };
                     var saveFileDialog = new SaveFileDialog();
 
-                    if (fileFormat == ".mp3")
-                    {
-                        saveFileDialog.Filter = "MP3 Audio (*.mp3)|*.mp3";
-                    }
-                    else
-                    {
-                        saveFileDialog.Filter = "MP3 Audio (*.mp3)|*.mp3";
-                    }
-                    Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-                    if (filepathDialog == true)
-                    {
-                        string filepath = saveFileDialog.FileName;
-                    }
-                    string filepathS = saveFileDialog.FileName;
                     if (dnCC.IsChecked == true)
                     {
                         var trackManifest = await youtubeClient.Videos.ClosedCaptions.GetManifestAsync(dlURL);
@@ -307,26 +304,10 @@ namespace FilumDLWPF
                     MessageBox.Show("Downloaded the audio successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
-                {
-                    string dlRes = dnRes.SelectedItem.ToString();
-                    dlRes = dlRes.Remove(0, 38);
+                { 
                     var audioStreamInfoA = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                     var streamInfosA = new IStreamInfo[] { audioStreamInfoA };
-                    var saveFileDialog = new SaveFileDialog();
-                    if (fileFormat == ".mp3")
-                    {
-                        saveFileDialog.Filter = "MP3 Audio (*.mp3)|*.mp3";
-                    }
-                    else
-                    {
-                        saveFileDialog.Filter = "MP3 Audio (*.mp3)|*.mp3";
-                    }
-                    Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-                    if (filepathDialog == true)
-                    {
-                        string filepath = saveFileDialog.FileName;
-                    }
-                    string filepathS = saveFileDialog.FileName;
+                    
                     if (dnCC.IsChecked == true)
                     {
                         var trackManifest = await youtubeClient.Videos.ClosedCaptions.GetManifestAsync(dlURL);
@@ -368,30 +349,11 @@ namespace FilumDLWPF
             }
             else if (ytdlType == YTVideoDLType.VideoOnly)
             {
-                if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
+                if (dnRes.SelectedItem == MaxQuality)
                 {
                     var videoStreamInfo = streamManifest.GetVideoStreams().GetWithHighestVideoQuality();
                     var streamInfos = new IStreamInfo[] { videoStreamInfo };
-                    var saveFileDialog = new SaveFileDialog();
-
-                    if (fileFormat == ".avi")
-                    {
-                        saveFileDialog.Filter = "AVI Video (*.avi)|*.avi";
-                    }
-                    else if (fileFormat == ".mp4")
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    else
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-                    if (filepathDialog == true)
-                    {
-                        string filepath = saveFileDialog.FileName;
-                    }
-                    string filepathS = saveFileDialog.FileName;
+                 
                     if (dnCC.IsChecked == true)
                     {
                         var trackManifest = await youtubeClient.Videos.ClosedCaptions.GetManifestAsync(dlURL);
@@ -415,30 +377,10 @@ namespace FilumDLWPF
                     statusBar.Text = "Downloaded Successfully!";
                 }
                 else
-                {
-                    string dlRes = dnRes.SelectedItem.ToString();
-                    dlRes = dlRes.Remove(0, 38);
-                    var videoStreamInfoA = streamManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == dlRes);
+                {                  
+                    var videoStreamInfoA = streamManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == resFormat);
                     var streamInfosA = new IStreamInfo[] { videoStreamInfoA };
-                    var saveFileDialog = new SaveFileDialog();
-                    if (fileFormat == ".avi")
-                    {
-                        saveFileDialog.Filter = "AVI Video (*.avi)|*.avi";
-                    }
-                    else if (fileFormat == ".mp4")
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    else
-                    {
-                        saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                    }
-                    Nullable<bool> filepathDialog = saveFileDialog.ShowDialog();
-                    if (filepathDialog == true)
-                    {
-                        string filepath = saveFileDialog.FileName;
-                    }
-                    string filepathS = saveFileDialog.FileName;
+                   
                     if (dnCC.IsChecked == true)
                     {
                         var trackManifest = await youtubeClient.Videos.ClosedCaptions.GetManifestAsync(dlURL);
@@ -479,44 +421,27 @@ namespace FilumDLWPF
                 }
             }
         }
-        public async void YTPlaylistDownloadAsync(string dlURL, YTVideoDLType ytdlType, string captionLanguage, string fileFormat)
+        public async void YTPlaylistDownloadAsync(string dlURL, YTVideoDLType ytdlType, string captionLanguage, string fileFormat, string resFormat)
         {
             var youtubeClient = new YoutubeClient();
             if (ytdlType == YTVideoDLType.AudioAndVideo)
             {
-                var saveFileDialog = new SaveFileDialog();
-                saveFileDialog.ValidateNames = false;
-                saveFileDialog.CheckFileExists = false;
-                saveFileDialog.CheckPathExists = true;
-                if (fileFormat == ".avi")
+                var dlg = new FolderPicker();
+                dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dlg.ShowDialog() == true)
                 {
-                    saveFileDialog.Filter = "AVI Video (*.avi)|*.avi";
+                    string filepath = dlg.ResultPath;
                 }
-                else if (fileFormat == ".mp4")
-                {
-                    saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                }
-                else
-                {
-                    saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                }
-                string filenameP;
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    filenameP = saveFileDialog.FileName;
-                }
-                filenameP = saveFileDialog.FileName;
-                string filenameT = filenameP;
-                var i = 1;
+                string filepathS = dlg.ResultPath;
                 await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(dlURL))
                 {
+                    string name = videoP.Title;
+                    string channel = videoP.Author.ChannelTitle;
+                    string filepath = $"{filepathS}\\{channel} - {name}{fileFormat}";
 
-                    string filenameSeq = filenameT.Remove(filenameT.Length - 4, 4) + i;
-                    i = i + 1;
-                    filenameP = filenameSeq + fileFormat;
                     var streamsManifest = await youtubeClient.Videos.Streams.GetManifestAsync(videoP.Id);
 
-                    if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
+                    if (dnRes.SelectedItem == MaxQuality)
                     {
                         var audioStreamInfo = streamsManifest.GetAudioStreams().GetWithHighestBitrate();
                         var videoStreamInfo = streamsManifest.GetVideoStreams().GetWithHighestVideoQuality();
@@ -534,20 +459,20 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepath.Remove(filepath.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Downloaded successfully, proceeding with video download...";
                                 MessageBox.Show("Downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
                         }
                         statusBar.Text = "Downloading...";
-                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filenameP).Build());
-                        statusBar.Text = "Downloaded " + filenameP + " Successfully!";
+                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filepath).Build());
+                        statusBar.Text = $"Downloaded  {filepath} Successfully!";
+                        MessageBox.Show($"Downloaded {filepath} successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     }
                     else
                     {
-                        string dlRes = dnRes.SelectedItem.ToString();
-                        dlRes = dlRes.Remove(0, 38);
-                        var videoStreamInfoA = streamsManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == dlRes);
+                        var videoStreamInfoA = streamsManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == resFormat);
                         if (videoStreamInfoA == null)
                         {
 
@@ -567,16 +492,16 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepath.Remove(filepath.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Captions downloaded successfully, proceeding with video download...";
                             }
                         }
                         try
                         {
                             statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
-                            statusBar.Text = "Downloaded " + filenameP + " Successfully!";
-                            MessageBox.Show("Downloaded " + filenameP + " successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepath).Build());
+                            statusBar.Text = $"Downloaded  {filepath} Successfully!";
+                            MessageBox.Show($"Downloaded {filepath} successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         catch (NullReferenceException)
                         {
@@ -586,7 +511,7 @@ namespace FilumDLWPF
                             streamInfosA = new IStreamInfo[] { audioStreamInfoA, videoStreamInfoA };
 
                             statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepath).Build());
 
                             statusBar.Text = "Downloaded Successfully!";
                             MessageBox.Show("Downloaded the video successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -599,35 +524,22 @@ namespace FilumDLWPF
             }
             else if (ytdlType == YTVideoDLType.AudioOnly)
             {
-                var saveFileDialog = new SaveFileDialog();
-                saveFileDialog.ValidateNames = false;
-                saveFileDialog.CheckFileExists = false;
-                saveFileDialog.CheckPathExists = true;
-                if (fileFormat == ".mp3")
+                var dlg = new FolderPicker();
+                dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dlg.ShowDialog() == true)
                 {
-                    saveFileDialog.Filter = "MP3 Audio (*.mp3)|*.mp3";
+                    string filepath = dlg.ResultPath;
                 }
-                else
-                {
-                    saveFileDialog.Filter = "MP3 Audio (*.mp3)|*.mp3";
-                }
-                string filenameP;
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    filenameP = saveFileDialog.FileName;
-                }
-                filenameP = saveFileDialog.FileName;
-                string filenameT = filenameP;
-                var i = 1;
+                string filepathS = dlg.ResultPath;
                 await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(dlURL))
                 {
 
-                    string filenameSeq = filenameT.Remove(filenameT.Length - 4, 4) + i;
-                    i = i + 1;
-                    filenameP = filenameSeq + fileFormat;
+                    string name = videoP.Title;
+                    string channel = videoP.Author.ChannelTitle;
+                    string filepath = $"{filepathS}\\{channel} - {name}{fileFormat}";
                     var streamsManifest = await youtubeClient.Videos.Streams.GetManifestAsync(videoP.Id);
 
-                    if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
+                    if (dnRes.SelectedItem == MaxQuality)
                     {
                         var audioStreamInfo = streamsManifest.GetAudioStreams().GetWithHighestBitrate();
                         var streamInfos = new IStreamInfo[] { audioStreamInfo };
@@ -644,21 +556,19 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepath.Remove(filepath.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Downloaded successfully, proceeding with audio download...";
                                 MessageBox.Show("Downloaded successfully, proceeding with audio download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
                         }
                         statusBar.Text = "Downloading...";
-                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filenameP).Build());
-                        statusBar.Text = "Downloaded " + filenameP + " Successfully!";
+                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filepath).Build());
+                        statusBar.Text = $"Downloaded {filepath} Successfully!";
+                        MessageBox.Show($"Downloaded {filepath} successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     }
                     else
                     {
-                        string dlRes = dnRes.SelectedItem.ToString();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        dlRes = dlRes.Remove(0, 38);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                         var audioStreamInfoA = streamsManifest.GetAudioStreams().GetWithHighestBitrate();
                         var streamInfosA = new IStreamInfo[] { audioStreamInfoA };
                         if (dnCC.IsChecked == true)
@@ -673,30 +583,22 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading audio captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepath.Remove(filepath.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Captions downloaded successfully, proceeding with audio download...";
                             }
                         }
                         try
                         {
                             statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
-                            statusBar.Text = "Downloaded " + filenameP + " Successfully!";
-                            MessageBox.Show("Downloaded " + filenameP + " successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepath).Build());
+                            statusBar.Text = $"Downloaded {filepath} Successfully!";
+                            MessageBox.Show($"Downloaded {filepath} successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
-                        catch (NullReferenceException)
+                        catch(Exception ex)
                         {
-                            MessageBox.Show("Selected video quality unavilable, changing the resolution to highest video quality...", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                            audioStreamInfoA = streamsManifest.GetAudioStreams().GetWithHighestBitrate();
-                            streamInfosA = new IStreamInfo[] { audioStreamInfoA };
-
-                            statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
-
-                            statusBar.Text = "Downloaded Successfully!";
-                            MessageBox.Show("Downloaded the audio successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                            statusBar.Text = ex.Message;
                         }
+
                     }
                 }
                 MessageBox.Show("Downloaded the playlist successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -704,39 +606,22 @@ namespace FilumDLWPF
             }
             else if (ytdlType == YTVideoDLType.VideoOnly)
             {
-                var saveFileDialog = new SaveFileDialog();
-                saveFileDialog.ValidateNames = false;
-                saveFileDialog.CheckFileExists = false;
-                saveFileDialog.CheckPathExists = true;
-                if (fileFormat == ".avi")
+                var dlg = new FolderPicker();
+                dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                if (dlg.ShowDialog() == true)
                 {
-                    saveFileDialog.Filter = "AVI Video (*.avi)|*.avi";
+                    string filepath = dlg.ResultPath;
                 }
-                else if (fileFormat == ".mp4")
-                {
-                    saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                }
-                else
-                {
-                    saveFileDialog.Filter = "MP4 Video (*.mp4)|*.mp4";
-                }
-                string filenameP;
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    filenameP = saveFileDialog.FileName;
-                }
-                filenameP = saveFileDialog.FileName;
-                string filenameT = filenameP;
-                var i = 1;
+                string filepathS = dlg.ResultPath;
                 await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(dlURL))
                 {
 
-                    string filenameSeq = filenameT.Remove(filenameT.Length - 4, 4) + i;
-                    i = i + 1;
-                    filenameP = filenameSeq + fileFormat;
+                    string name = videoP.Title;
+                    string channel = videoP.Author.ChannelTitle;
+                    string filepath = $"{filepathS}\\{channel} - {name}{fileFormat}";
                     var streamsManifest = await youtubeClient.Videos.Streams.GetManifestAsync(videoP.Id);
 
-                    if (dnRes.SelectedItem.ToString().Remove(0, 38) == "Highest Video Quality")
+                    if (dnRes.SelectedItem == MaxQuality)
                     {
                         var videoStreamInfo = streamsManifest.GetVideoStreams().GetWithHighestVideoQuality();
                         var streamInfos = new IStreamInfo[] { videoStreamInfo };
@@ -753,20 +638,18 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepath.Remove(filepath.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Downloaded successfully, proceeding with video download...";
                                 MessageBox.Show("Downloaded successfully, proceeding with video download...", "Captions Downloaded Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
                         }
                         statusBar.Text = "Downloading...";
-                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filenameP).Build());
-                        statusBar.Text = "Downloaded " + filenameP + " Successfully!";
+                        await youtubeClient.Videos.DownloadAsync(streamInfos, new ConversionRequestBuilder(filepath).Build());
+                        statusBar.Text = $"Downloaded {filepath} Successfully!";
                     }
                     else
                     {
-                        string dlRes = dnRes.SelectedItem.ToString();
-                        dlRes = dlRes.Remove(0, 38);
-                        var videoStreamInfoA = streamsManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == dlRes);
+                        var videoStreamInfoA = streamsManifest.GetVideoStreams().FirstOrDefault(s => s.VideoQuality.Label == resFormat);
                         var streamInfosA = new IStreamInfo[] { videoStreamInfoA };
                         if (dnCC.IsChecked == true)
                         {
@@ -780,16 +663,16 @@ namespace FilumDLWPF
                             else
                             {
                                 statusBar.Text = "Downloading video captions...";
-                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filenameP.Remove(filenameP.Length - 4, 4) + ".srt");
+                                await youtubeClient.Videos.ClosedCaptions.DownloadAsync(trackInfo, filepath.Remove(filepath.Length - 4, 4) + ".srt");
                                 statusBar.Text = "Captions downloaded successfully, proceeding with video download...";
                             }
                         }
                         try
                         {
                             statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
-                            statusBar.Text = "Downloaded " + filenameP + " Successfully!";
-                            MessageBox.Show("Downloaded " + filenameP + " successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepath).Build());
+                            statusBar.Text = $"Downloaded {filepath} Successfully!";
+                            MessageBox.Show($"Downloaded {filepath} successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         catch (NullReferenceException)
                         {
@@ -798,7 +681,7 @@ namespace FilumDLWPF
                             streamInfosA = new IStreamInfo[] { videoStreamInfoA };
 
                             statusBar.Text = "Downloading...";
-                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filenameP).Build());
+                            await youtubeClient.Videos.DownloadAsync(streamInfosA, new ConversionRequestBuilder(filepath).Build());
 
                             statusBar.Text = "Downloaded Successfully!";
                             MessageBox.Show("Downloaded the video successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -825,32 +708,32 @@ namespace FilumDLWPF
                     {
                         if (audioVideo.IsSelected == true)
                         {
-                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet());
+                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
                         }
                         else if (audioOnly.IsSelected == true)
                         {
-                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
 
                         }
                         else if (videoOnly.IsSelected == true)
                         {
-                            YTVideoDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTVideoDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
                         }
                     }
                     else if (dnType.SelectedItem == Playlist)
                     {
                         if (audioVideo.IsSelected == true)
                         {
-                        YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet());
+                        YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
                     }
                         else if (audioOnly.IsSelected == true)
                         {
-                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
 
                         }
                         else if (videoOnly.IsSelected == true)
                         {
-                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet());
+                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
                         }
                     }
 
@@ -1108,9 +991,31 @@ namespace FilumDLWPF
             }
         }
 
-        private void ccLang_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RMM_Btn_Click(object sender, RoutedEventArgs e)
         {
-            dnButton.Visibility = Visibility.Visible;
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();
+        }
+
+        private void cc_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                dnButton.Visibility = Visibility.Visible;
+            }
+            catch (NullReferenceException)
+            {
+                if (dnType.SelectedItem == Video)
+                {
+                    dnButton.Content = "Download";
+                }
+                else if (dnType.SelectedItem == Playlist)
+                {
+                    dnButton.Content = "Download All";
+                }
+            }
+
         }
     }
 }
