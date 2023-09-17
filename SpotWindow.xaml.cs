@@ -89,6 +89,20 @@ namespace FilumDLWPF
             string clientSecret = secrets.SetSpotifyClientSecret();
             return clientSecret;
         }
+        public static string SanitizeFilename(string input)
+        {
+            // Remove characters that are not allowed in filenames
+            string sanitized = Regex.Replace(input, @"[<>:""/\\|?*]", "");
+
+            // Truncate the filename to a reasonable length (adjust as needed)
+            int maxLength = 100;
+            if (sanitized.Length > maxLength)
+            {
+                sanitized = sanitized.Substring(0, maxLength);
+            }
+
+            return sanitized;
+        }
         public async void GetMultipleTracks(string clientID, string clientSecret, string ID, SpotifyType spotifyType, string fileFormat)
         {
             //Authentication
@@ -111,7 +125,7 @@ namespace FilumDLWPF
             if(spotifyType == SpotifyType.Track)
             {
                 var track = await spotify.Tracks.Get(ID);
-                string song = track.Name;
+                string song = SanitizeFilename(track.Name);
                 string artist = track.Artists[0].Name;
                 string album = track.Album.Name;
                 MessageBox.Show($"Track Name : {song} \nArtist : {artist} \nAlbum : {album} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -132,7 +146,7 @@ namespace FilumDLWPF
                     string filepath = dlg.ResultPath;
                 }
              
-                string filepathS = $"{dlg.ResultPath}\\{artist}{song}{fileFormat}";
+                string filepathS = $"{dlg.ResultPath}\\{artist} - {song}{fileFormat}";
 
                 statusBar.Text = "Downloading...";
                 await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathS).Build());
@@ -143,7 +157,7 @@ namespace FilumDLWPF
             {
                 //Get album
                 var album = await spotify.Albums.Get(ID);
-                var albumName = album.Name;
+                var albumName = SanitizeFilename(album.Name);
                 var artistA = album.Artists[0].Name;
 
                 statusBar.Text = "Retrieving Album Tracks...";
@@ -162,9 +176,9 @@ namespace FilumDLWPF
                 foreach (SimpleTrack item in album.Tracks.Items)
                 {
                     var track = await spotify.Tracks.Get(item.Id);
-                    string song = track.Name;
+                    string song = SanitizeFilename(track.Name);
                     string artist = track.Artists[0].Name;
-                    string albumA = track.Album.Name;
+                    string albumA = SanitizeFilename(track.Album.Name);
                     string filepathD = $"{filepathS}\\{artist} - {song}{fileFormat}";
                     MessageBox.Show($"Track Name : {song} \nArtist : {artist} \nAlbum : {albumName} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -212,9 +226,9 @@ namespace FilumDLWPF
                     if (item.Track is FullTrack track)
                     {
                         var trackA = await spotify.Tracks.Get(track.Id);
-                        string song = trackA.Name;
+                        string song = SanitizeFilename(trackA.Name);
                         string artist = trackA.Artists[0].Name;
-                        string albumA = trackA.Album.Name;
+                        string albumA = SanitizeFilename(trackA.Album.Name);
                         string filepathD = $"{filepathS}\\{artist} - {song}{fileFormat}";
                         MessageBox.Show($"Track Name : {song} \nArtist : {artist} \nAlbum : {albumA} \nPlaylist : {playlistName} ", "Track Information", MessageBoxButton.OK, MessageBoxImage.Information);
 

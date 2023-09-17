@@ -7,7 +7,7 @@
     <Company>Blaze Devs</Company>
     <Authors>Shubhojeet Choudhury, Blaze Devs</Authors>
     <PackageIcon>LogoSummer.ico</PackageIcon>
-    <Version>1.4.5</Version>
+    <Version>1.5.0</Version>
     <VersionPrefix>v</VersionPrefix>
     <PackageIconUrl />
     <PackAsTool>False</PackAsTool>
@@ -18,14 +18,13 @@
     <Title>Filum-DL</Title>
     <Description>An advanced content downloader with multiple supported platforms based on .NET!</Description>
     <NeutralLanguage>en</NeutralLanguage>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <UseWindowsForms>False</UseWindowsForms>
     <Nullable>disable</Nullable>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
     <StartupObject>FilumDLWPF.App</StartupObject>
   </PropertyGroup>
 
@@ -53,8 +52,8 @@
     <PackageReference Include="SpotifyAPI.Web" Version="7.0.0" />
     <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="YoutubeExplode" Version="6.2.15" />
-    <PackageReference Include="YoutubeExplode.Converter" Version="6.2.15" />
+    <PackageReference Include="YoutubeExplode" Version="6.3.4" />
+    <PackageReference Include="YoutubeExplode.Converter" Version="6.3.4" />
   </ItemGroup>
 
 

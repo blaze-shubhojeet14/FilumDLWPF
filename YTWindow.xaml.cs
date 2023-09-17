@@ -32,6 +32,20 @@ namespace FilumDLWPF
         
         public string regexPattern = @"(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|v\/|embed\/|playlist\?(?:.*&)?list=|user\/\w+\/playlist\/)|youtu\.be\/|youtube.com\/shorts\/)([a-zA-Z0-9-_]+)";
 
+        public string SanitizeFilename(string input)
+        {
+            // Remove characters that are not allowed in filenames
+            string sanitized = Regex.Replace(input, @"[<>:""/\\|?*]", "");
+
+            // Truncate the filename to a reasonable length (adjust as needed)
+            int maxLength = 100;
+            if (sanitized.Length > maxLength)
+            {
+                sanitized = sanitized.Substring(0, maxLength);
+            }
+
+            return sanitized;
+        }
         public string DownloadFormatSet()
         {
             if(ffInfoOpts.SelectedItem == FFavi)
@@ -194,7 +208,7 @@ namespace FilumDLWPF
             {
                 string filepath = dlg.ResultPath;
             }
-            string filepathS = $"{dlg.ResultPath}\\{channel}{name}{fileFormat}";
+            string filepathS = $"{dlg.ResultPath}\\{channel} - {name}{fileFormat}";
             var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(dlURL);
             if (ytdlType == YTVideoDLType.AudioAndVideo)
             {
@@ -435,7 +449,7 @@ namespace FilumDLWPF
                 string filepathS = dlg.ResultPath;
                 await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(dlURL))
                 {
-                    string name = videoP.Title;
+                    string name = SanitizeFilename(videoP.Title);
                     string channel = videoP.Author.ChannelTitle;
                     string filepath = $"{filepathS}\\{channel} - {name}{fileFormat}";
 
@@ -534,7 +548,7 @@ namespace FilumDLWPF
                 await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(dlURL))
                 {
 
-                    string name = videoP.Title;
+                    string name = SanitizeFilename(videoP.Title);
                     string channel = videoP.Author.ChannelTitle;
                     string filepath = $"{filepathS}\\{channel} - {name}{fileFormat}";
                     var streamsManifest = await youtubeClient.Videos.Streams.GetManifestAsync(videoP.Id);
@@ -616,7 +630,7 @@ namespace FilumDLWPF
                 await foreach (var videoP in youtubeClient.Playlists.GetVideosAsync(dlURL))
                 {
 
-                    string name = videoP.Title;
+                    string name = SanitizeFilename(videoP.Title);
                     string channel = videoP.Author.ChannelTitle;
                     string filepath = $"{filepathS}\\{channel} - {name}{fileFormat}";
                     var streamsManifest = await youtubeClient.Videos.Streams.GetManifestAsync(videoP.Id);
