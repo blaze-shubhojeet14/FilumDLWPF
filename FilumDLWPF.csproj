@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
@@ -18,7 +17,7 @@
     <Title>Filum-DL</Title>
     <Description>An advanced content downloader with multiple supported platforms based on .NET!</Description>
     <NeutralLanguage>en</NeutralLanguage>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -27,41 +26,63 @@
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <StartupObject>FilumDLWPF.App</StartupObject>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
     <Optimize>True</Optimize>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
-    <None Remove="Logo.ico" />
     <None Remove="LogoSummer.ico" />
+    <None Remove="Resources\about.png" />
+    <None Remove="Resources\download.png" />
+    <None Remove="Resources\error.png" />
+    <None Remove="Resources\help.png" />
+    <None Remove="Resources\information.png" />
+    <None Remove="Resources\Music.png" />
+    <None Remove="Resources\pause.png" />
+    <None Remove="Resources\play.png" />
+    <None Remove="Resources\spotify.png" />
+    <None Remove="Resources\stop.png" />
+    <None Remove="Resources\success.png" />
+    <None Remove="Resources\videoplayer.png" />
+    <None Remove="Resources\warning.png" />
+    <None Remove="Resources\youtube.png" />
+    <None Remove="Source Code\youtube.png" />
+    <None Remove="videoplayer.png" />
+    <None Remove="youtube.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Images\LogoSummer.ico" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
-    <PackageReference Include="SpotifyAPI.Web" Version="7.0.0" />
-    <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.0.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="YoutubeExplode" Version="6.3.4" />
-    <PackageReference Include="YoutubeExplode.Converter" Version="6.3.4" />
+    <PackageReference Include="SpotifyAPI.Web" Version="7.0.2" />
+    <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.0.2" />
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
+    <PackageReference Include="YoutubeExplode" Version="6.3.12" />
+    <PackageReference Include="YoutubeExplode.Converter" Version="6.3.12" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Resource Include="Logo.ico" />
     <Resource Include="LogoSummer.ico" />
+    <Resource Include="Resources\about.png" />
+    <Resource Include="Resources\download.png" />
+    <Resource Include="Resources\error.png" />
+    <Resource Include="Resources\help.png" />
+    <Resource Include="Resources\information.png" />
+    <Resource Include="Resources\Music.png" />
+    <Resource Include="Resources\pause.png" />
+    <Resource Include="Resources\play.png" />
+    <Resource Include="Resources\spotify.png" />
+    <Resource Include="Resources\stop.png" />
+    <Resource Include="Resources\success.png" />
+    <Resource Include="Resources\videoplayer.png" />
+    <Resource Include="Resources\warning.png" />
+    <Resource Include="Resources\youtube.png" />
+    <Resource Include="youtube.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -74,14 +95,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="ffmpeg.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -99,5 +118,7 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
+  <ItemGroup>
+    <Folder Include="Source Code\" />
+  </ItemGroup>
 </Project>

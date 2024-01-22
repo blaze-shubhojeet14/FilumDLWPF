@@ -9,16 +9,26 @@ using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using YoutubeExplode.Exceptions;
 using static FilumDLWPF.FolderPicker;
+using YoutubeExplode.Common;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace FilumDLWPF
 {
     /// <summary>
     /// Interaction logic for YTWindow.xaml
+    /// Window for the YouTube Downloader
+    /// Copyright: Blaze Devs 2022-2024, All Rights Reserved
     /// </summary>
     public partial class YTWindow : Window
     {
         public YTWindow()
         {
+            var AppName = GlobalVariables.AppName;
+            var AppVersion = GlobalVariables.AppVersion;
+            this.Title = $" {AppName} {AppVersion} - YouTube Downloader";
             InitializeComponent();
         }
 
@@ -29,7 +39,8 @@ namespace FilumDLWPF
             VideoOnly = 2
         }
         
-        
+
+
         public string regexPattern = @"(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|v\/|embed\/|playlist\?(?:.*&)?list=|user\/\w+\/playlist\/)|youtu\.be\/|youtube.com\/shorts\/)([a-zA-Z0-9-_]+)";
 
         public string SanitizeFilename(string input)
@@ -196,11 +207,18 @@ namespace FilumDLWPF
                 return "en";
             }
         }
+        
+        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         public async void YTVideoDownloadAsync(string dlURL, YTVideoDLType ytdlType, string captionLanguage, string fileFormat, string resFormat)
         {
             var youtubeClient = new YoutubeClient();
             var video = await youtubeClient.Videos.GetAsync(dlURL);
-            string name = video.Title;
+            
+            string name = SanitizeFilename(video.Title);
             string channel = video.Author.ChannelTitle;
             var dlg = new FolderPicker();
             dlg.InputPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
@@ -707,39 +725,69 @@ namespace FilumDLWPF
                 statusBar.Text = "Downloaded the playlist successfully!";
             }
         }
-        private void dnButton_Click(object sender, RoutedEventArgs e)
+        private async void dnButton_Click(object sender, RoutedEventArgs e)
         {
+            VideoWindow videoWindow = new VideoWindow();
+
             var regex = new Regex(regexPattern);
             var match = regex.Match(dnURI.Text);
             if (match.Success)
-            {
-                string videoId = match.Groups[1].Value;
-            }
+              {
+                  string videoId = match.Groups[1].Value;
+              }
+
             string dlId = match.Groups[1].Value;
+
+            
             try
             {
                     if (dnType.SelectedItem == Video)
                     {
-                        if (audioVideo.IsSelected == true)
+                        bool? msgResult = MessageBoxCustom.ShowDialogBox("Do you want to preview the video before downloading?", "Preview Video", MessageBoxCustom.MessageBoxType.Question);
+                        if (msgResult == true)
                         {
-                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                           videoWindow.VideoPlayer(dlId);
+                           await Task.Delay(40000);
+
+                           if (audioVideo.IsSelected == true)
+                           {
+                                YTVideoDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                           }
+                           else if (audioOnly.IsSelected == true)
+                           {
+                                YTVideoDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+
+                           }
+                           else if (videoOnly.IsSelected == true)
+                           {
+                                YTVideoDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                           }
                         }
-                        else if (audioOnly.IsSelected == true)
+                        else if (msgResult == false)
                         {
-                            YTVideoDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                           if (audioVideo.IsSelected == true)
+                           {
+                                YTVideoDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                           }
+                           else if (audioOnly.IsSelected == true)
+                           {
+                                YTVideoDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+
+                           }
+                           else if (videoOnly.IsSelected == true)
+                           {
+                                YTVideoDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                           }
 
                         }
-                        else if (videoOnly.IsSelected == true)
-                        {
-                            YTVideoDownloadAsync(dlId, YTVideoDLType.VideoOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
-                        }
-                    }
+                    }                  
+                    
                     else if (dnType.SelectedItem == Playlist)
                     {
                         if (audioVideo.IsSelected == true)
                         {
-                        YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
-                    }
+                            YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioAndVideo, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());
+                        }
                         else if (audioOnly.IsSelected == true)
                         {
                             YTPlaylistDownloadAsync(dlId, YTVideoDLType.AudioOnly, CCLanguageSet(), DownloadFormatSet(), DownloadResSet());

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.5.0 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
-        Icon="/LogoSummer.ico"
+        Title="Filum-DL Application v1.6.0 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
+        Icon="Resources/youtube.png"
         Background="Aqua"
         >
     <!--<Window.Background>
@@ -18,7 +18,7 @@
             <RowDefinition Height="31*"/>
             <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
-        <Label Content="Filum-DL YouTube Downloader" HorizontalContentAlignment="Center" FontWeight="Bold" Foreground="Black" Background="Aqua" HorizontalAlignment="Left" FontSize="20px" Margin="251,0,0,336" VerticalAlignment="Bottom" Height="41" Width="306" RenderTransformOrigin="0.527,0.589"/>
+        <Label Content="Filum-DL YouTube Downloader" HorizontalContentAlignment="Center" FontWeight="Bold" Foreground="Red" Background="Aqua" HorizontalAlignment="Left" FontSize="20px" Margin="251,0,0,336" VerticalAlignment="Bottom" Height="41" Width="306" RenderTransformOrigin="0.527,0.589"/>
         <Label Content="Download Type: " Visibility="Visible" Name="dnTypeLabel" FontSize="15px" HorizontalAlignment="Left" Margin="28,78,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
         <ComboBox Margin="152,78,136,289" Visibility="Visible" Name="dnType" SelectionChanged="dnType_SelectionChanged" Uid="dnType">
             <ComboBoxItem Content="Choose the download type..." IsEnabled="False" IsSelected="True" />
@@ -44,7 +44,7 @@
             <ComboBoxItem Content="2160p" IsEnabled="True" Name="p2160" />
             <ComboBoxItem Content="Highest Video Quality" Name="MaxQuality" IsEnabled="True" />
         </ComboBox>
-        <Label Content="Status Bar:" Name="statusBarLabel" HorizontalAlignment="Left" FontSize="15px"  Margin="38,378,0,0" VerticalAlignment="Top" Width="121"/>
+        <Label Content="Status Bar:" Name="statusBarLabel" Foreground="DarkRed" FontWeight="Bold" HorizontalAlignment="Left" FontSize="15px"  Margin="38,378,0,0" VerticalAlignment="Top" Width="121"/>
         <TextBox HorizontalAlignment="Left" Name="statusBar" Height="47" Margin="41,403,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="726" Grid.RowSpan="2"/>
         <Label Content="Download Options:" Name="dnOptsLabel" Visibility="Hidden" FontSize="15px" HorizontalAlignment="Left" Margin="14,230,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.468,-0.448" Height="51" Width="154"/>
         <ComboBox Margin="153,227,133,148" Name="dnOpts" Visibility="Hidden"  SelectionChanged="dnOpts_SelectionChanged">
@@ -85,7 +85,7 @@
             <ComboBoxItem Content="MP3" x:Name="FFmp3" IsEnabled="True" />
             <ComboBoxItem Content="AVI" x:Name="FFavi" IsEnabled="True" />
         </ComboBox>
-        <Button Content="Return To Main Menu" FontSize="18px" x:Name="RMM_Btn" Click="RMM_Btn_Click" HorizontalAlignment="Left" Margin="41,336,0,0" VerticalAlignment="Top" Height="48" Width="338"/>
-        <Button Content="Download" Visibility="Hidden" FontSize="18px" x:Name="dnButton" Click="dnButton_Click" HorizontalAlignment="Left" Margin="404,338,0,0" VerticalAlignment="Top" Height="46" Width="338"/>
+        <Button Content="Return To Main Menu" FontWeight="Bold" Background="LightBlue" Foreground="DarkBlue" FontSize="18px" x:Name="RMM_Btn" Click="RMM_Btn_Click" HorizontalAlignment="Left" Margin="41,336,0,0" VerticalAlignment="Top" Height="48" Width="338"/>
+        <Button Content="Download" FontWeight="Bold" Background="LightBlue" Foreground="DarkBlue" Visibility="Hidden" FontSize="18px" x:Name="dnButton" Click="dnButton_Click" HorizontalAlignment="Left" Margin="404,338,0,0" VerticalAlignment="Top" Height="46" Width="338"/>
     </Grid>
 </Window>

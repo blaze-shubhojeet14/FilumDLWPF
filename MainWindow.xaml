@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.5.0 - The ultimate downloader for your needs!" Height="459" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.6.0 - The ultimate downloader for your needs!" Height="459" Width="800" ResizeMode="NoResize"
         Icon="/LogoSummer.ico"
         Background="Aqua"
         >
@@ -20,12 +20,12 @@
             <ComboBoxItem Content="  YouTube" Name="YouTube" Selected="YT_Selected"></ComboBoxItem>
             <ComboBoxItem Content="  Spotify" Name="Spotify" Selected="Spotify_Selected"></ComboBoxItem>
         </ComboBox>
-        <Label Content="Media Platform&#xD;&#xA;" HorizontalAlignment="Left" FontSize="30px" Margin="250,145,0,0" VerticalAlignment="Top" Height="96" Width="298"/>
-        <Button Content="Begin" Visibility="Hidden" HorizontalAlignment="Left" Click="exBtn_Click" FontSize="25px" Name="exBtn" Margin="272,294,0,0" VerticalAlignment="Top" Height="65" Width="224"/>
-        <Label Content="Filum-DL " FontSize="60px" HorizontalAlignment="Left" Margin="228,60,0,0" VerticalAlignment="Top" FontWeight="Bold" Height="78" Width="370" RenderTransformOrigin="0.482,0.521"/>
-        <Button Content="Know About The Developer!" Name="DevBtn" Click="DevBtn_Click" FontSize="20px" HorizontalAlignment="Left" Margin="391,378,0,0" VerticalAlignment="Top" Width="382" RenderTransformOrigin="0.504,0.385" Height="57"/>
-        <Button Content="Check Out Our Website!" Name="WebBtn" Click="WebBtn_Click" FontSize="20px" HorizontalAlignment="Left" Margin="14,378,0,0" VerticalAlignment="Top" Width="363" RenderTransformOrigin="0.504,0.385" Height="57"/>
-        <Button Content="?" Name="Surprise" Click="Surprise_Click" FontSize="20px" FontWeight="Bold" HorizontalAlignment="Left" Height="30" Margin="734,46,0,0" VerticalAlignment="Top" Width="35"/>
+        <Label Content="Media Platform" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Left" FontSize="30px" Margin="250,145,0,0" VerticalAlignment="Top" Height="96" Width="298"/>
+        <Button Content="Begin" FontWeight="Bold" Background="LightBlue" Foreground="DarkBlue" Visibility="Hidden" HorizontalAlignment="Left" Click="exBtn_Click" FontSize="25px" Name="exBtn" Margin="272,294,0,0" VerticalAlignment="Top" Height="65" Width="224"/>
+        <Label Content="Filum-DL " Foreground="Red" FontSize="60px" HorizontalAlignment="Left" Margin="228,60,0,0" VerticalAlignment="Top" FontWeight="Bold" Height="78" Width="370" RenderTransformOrigin="0.482,0.521"/>
+        <Button Content="Know About The Developer!" FontWeight="Bold" Background="LightBlue" Foreground="DarkBlue" Name="DevBtn" Click="DevBtn_Click" FontSize="20px" HorizontalAlignment="Left" Margin="391,378,0,0" VerticalAlignment="Top" Width="382" RenderTransformOrigin="0.504,0.385" Height="57"/>
+        <Button Content="Check Out Our Website!" FontWeight="Bold" Background="LightBlue" Foreground="DarkBlue" Name="WebBtn" Click="WebBtn_Click" FontSize="20px" HorizontalAlignment="Left" Margin="14,378,0,0" VerticalAlignment="Top" Width="363" RenderTransformOrigin="0.504,0.385" Height="57"/>
+        <Button Content="?" Name="Surprise"   Click="Surprise_Click" FontSize="20px" FontWeight="Bold" Background="LightBlue" Foreground="DarkBlue" HorizontalAlignment="Left" Height="30" Margin="734,46,0,0" VerticalAlignment="Top" Width="35"/>
 
     </Grid>
 </Window>
