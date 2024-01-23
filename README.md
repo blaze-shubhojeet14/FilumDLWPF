@@ -1,10 +1,27 @@
 # Filum-DL
-An advanced file downloader with multiple supported platforms based on .NET!
+An advanced file downloader with multiple supported platforms based on .NET 8 and WPF For Windows!
+
 # Credits
-- Program developed by Shubhojeet Choudhury & Team Blaze Devs
-- Logo designed by Shubhojeet Choudhury
+- Program developed by [Shubhojeet Choudhury](https://blazedevs.tech/aboutme.html) & Team Blaze Devs
+- Logo designed by [Shubhojeet Choudhury](https://blazedevs.tech/aboutme.html)
+- Icons by Icons8
+  
+# Primary Libraries
+- YoutubeExplode by [@Tyrrrz](https://github.com/Tyrrrz)
+- SpotifyAPI Library
+  
+# System Requirements
+- .NET 8.0 Desktop Runtime (64-bit)
+- Windows 7 or newer (64-bit) OS
+- RAM: 2GB or more
+- Storage: 200 MB
+- VRAM - 512MB or more (For using Video Preview Player)
+  That's it fellas 💯
+  
 # Support
 We would like to know your feedback and suggestions on our app so make sure to give it in the Discussions tab or mail us at [blazedevs2022@gmail.com](mailto:blazedevs2022@gmail.com).
+You can also share your feedback [here](https://blazedevs.tech/Contact.aspx)
+
 # License
 MIT License
 
