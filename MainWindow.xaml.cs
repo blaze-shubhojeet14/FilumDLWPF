@@ -17,7 +17,7 @@ namespace FilumDLWPF
     /// 
     public static class GlobalVariables
     {
-        public static string AppVersion = "v1.6.0"; //Just a variable to store the app version
+        public static string AppVersion = "v1.6.5"; //Just a variable to store the app version
         public static string AppName = "Filum - DL Application"; //Just a variable to store the app name
         public static bool SpotWindowClicked = false;
     }

@@ -6,7 +6,7 @@
     <Company>Blaze Devs</Company>
     <Authors>Shubhojeet Choudhury, Blaze Devs</Authors>
     <PackageIcon>LogoSummer.ico</PackageIcon>
-    <Version>1.5.0</Version>
+    <Version>1.6.5</Version>
     <VersionPrefix>v</VersionPrefix>
     <PackageIconUrl />
     <PackAsTool>False</PackAsTool>
@@ -58,12 +58,12 @@
     <Content Include="Images\LogoSummer.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="RestSharp" Version="110.2.0" />
-    <PackageReference Include="SpotifyAPI.Web" Version="7.0.2" />
-    <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.0.2" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="SpotifyAPI.Web" Version="7.2.1" />
+    <PackageReference Include="SpotifyAPI.Web.Auth" Version="7.2.1" />
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
-    <PackageReference Include="YoutubeExplode" Version="6.3.12" />
-    <PackageReference Include="YoutubeExplode.Converter" Version="6.3.12" />
+    <PackageReference Include="YoutubeExplode" Version="6.5.0" />
+    <PackageReference Include="YoutubeExplode.Converter" Version="6.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>

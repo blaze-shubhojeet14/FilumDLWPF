@@ -1,7 +1,5 @@
-﻿using Microsoft.Win32;
-using SpotifyAPI.Web;
+﻿using SpotifyAPI.Web;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,7 +12,6 @@ using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Converter;
 using YoutubeExplode.Videos.Streams;
-using static FilumDLWPF.FolderPicker;
 using static FilumDLWPF.SpotPreviewWindow;
 
 namespace FilumDLWPF
@@ -24,7 +21,171 @@ namespace FilumDLWPF
     /// Window for the Spotify Downloader
     /// Copyright: Blaze Devs 2022-2024, All Rights Reserved
     /// </summary>
-    /// 
+
+
+    // Spotify API Services
+    // <start>
+    public class FileSanitizer
+    {
+        public static string SanitizeFilename(string input)
+        {
+            // Remove characters that are not allowed in filenames
+            string sanitized = Regex.Replace(input, @"[<>:""/\\|?*]", "");
+
+            // Truncate the filename to a reasonable length (adjust as needed)
+            int maxLength = 100;
+            if (sanitized.Length > maxLength)
+            {
+                sanitized = sanitized.Substring(0, maxLength);
+            }
+
+            return sanitized;
+        }
+    }
+    public interface ITrackService
+    {
+        Task<FullTrack> GetTrack(string id);
+        String SongName { get; set; }
+        String ArtistName { get; set; }
+        String AlbumName { get; set; }
+        SpotifyAPI.Web.Image AlbumArt { get; set; }     
+    }
+    public class TrackService : FileSanitizer, ITrackService
+    {
+        private readonly SpotifyClient _spotify;
+
+        public TrackService(SpotifyClient spotify)
+        {
+            _spotify = spotify;
+        }
+
+        public async Task<FullTrack> GetTrack(string id)
+        {
+            var track = await _spotify.Tracks.Get(id);
+            SongName = SanitizeFilename(track.Name);
+            ArtistName = SanitizeFilename(track.Artists[0].Name);
+            AlbumName = SanitizeFilename(track.Album.Name);
+            AlbumArt = track.Album.Images[0];
+            return track;                   
+        }
+        public String SongName { get; set; }
+        public String ArtistName { get; set; }
+        public String AlbumName { get; set; }
+        public SpotifyAPI.Web.Image AlbumArt { get; set; }
+    }
+
+    public interface IAlbumService
+    {
+        Task<FullAlbum> GetAlbum(string id);
+        String ArtistName { get; set; }
+        String AlbumName { get; set; }
+        SpotifyAPI.Web.Image AlbumArt { get; set; }
+    }
+    public class AlbumService : FileSanitizer, IAlbumService
+    {
+        private readonly SpotifyClient _spotify;
+
+        public AlbumService(SpotifyClient spotify)
+        {
+            _spotify = spotify;
+        }
+
+        public async Task<FullAlbum> GetAlbum(string id)
+        {
+            var album = await _spotify.Albums.Get(id);
+            ArtistName = SanitizeFilename(album.Artists[0].Name);
+            AlbumName = SanitizeFilename(album.Name);
+            AlbumArt = album.Images[0];
+            return album;
+
+        }
+        public String ArtistName { get; set; }
+        public String AlbumName { get; set; }
+        public SpotifyAPI.Web.Image AlbumArt { get; set; }
+    }
+    public interface IPlaylistService
+    {
+        Task<FullPlaylist> GetPlaylist(string id);
+        String PlaylistName { get; set; }
+        String PlaylistAuthor { get; set; }
+        SpotifyAPI.Web.Image PlaylistArt { get; set; }
+    }
+    public class PlaylistService : FileSanitizer, IPlaylistService
+    {
+        private readonly SpotifyClient _spotify;
+
+        public PlaylistService(SpotifyClient spotify)
+        {
+            _spotify = spotify;
+        }
+
+        public async Task<FullPlaylist> GetPlaylist(string id)
+        {
+            var playlist = await _spotify.Playlists.Get(id);
+            PlaylistName = SanitizeFilename(playlist.Name);
+            PlaylistAuthor = playlist.Owner.DisplayName;
+            PlaylistArt = playlist.Images[0];
+            return playlist;
+        }
+        public String PlaylistName { get; set; }
+        public String PlaylistAuthor { get; set; }
+        public SpotifyAPI.Web.Image PlaylistArt { get; set; }
+    }
+    public interface IEpisodeService
+    {
+        Task<FullEpisode> GetEpisode(string id);
+        String EpisodeName { get; set; }
+        String EpisodeAuthor { get; set; }
+        SpotifyAPI.Web.Image EpisodeArt { get; set; }
+    }
+    public class EpisodeService : FileSanitizer, IEpisodeService
+    {
+        private readonly SpotifyClient _spotify;
+
+        public EpisodeService(SpotifyClient spotify)
+        {
+            _spotify = spotify;
+        }
+
+        public async Task<FullEpisode> GetEpisode(string id)
+        {
+            var episode = await _spotify.Episodes.Get(id);
+            EpisodeName = SanitizeFilename(episode.Name);
+            EpisodeAuthor = SanitizeFilename(episode.Show.Publisher);
+            EpisodeArt = episode.Images[0];
+            return episode;
+        }
+        public String EpisodeName { get; set; }
+        public String EpisodeAuthor { get; set; }
+        public SpotifyAPI.Web.Image EpisodeArt { get; set; }
+    }
+
+    public interface IAuthenticationService
+    {
+        Task<SpotifyClient> GetSpotifyClient();
+    }
+    public class AuthenticationService : IAuthenticationService
+    {
+        public async Task<SpotifyClient> GetSpotifyClient()
+        {
+            Secrets secrets = new Secrets();
+            string clientID = secrets.SetSpotifyClientID();
+            string clientSecret = secrets.SetSpotifyClientSecret();
+            var config = SpotifyClientConfig.CreateDefault();
+            var request = new ClientCredentialsRequest(clientID, clientSecret);
+            var response = await new OAuthClient(config).RequestToken(request);
+            if (response.IsExpired == true)
+            {
+                response = await new OAuthClient(config).RequestToken(request);
+            }
+            var spotify = new SpotifyClient(config.WithToken(response.AccessToken));
+
+            return spotify;
+        }
+    }
+    // <end>
+
+
 
     public partial class SpotWindow : Window
     {
@@ -36,7 +197,11 @@ namespace FilumDLWPF
             InitializeComponent();
 
         }
+
         public string SpotifyID { get; set; }
+
+        WebClient client = new WebClient();
+
         SpotPreviewWindow previewWindow = new SpotPreviewWindow();
 
         public enum SpotifyType
@@ -90,18 +255,6 @@ namespace FilumDLWPF
 
             return albumId;
         }
-        public string ClientID()
-        {
-            Secrets secrets = new Secrets();
-            string clientID = secrets.SetSpotifyClientID();
-            return clientID;
-        }
-        public string ClientSecret()
-        {
-            Secrets secrets = new Secrets();
-            string clientSecret = secrets.SetSpotifyClientSecret();
-            return clientSecret;
-        }
         public static string SanitizeFilename(string input)
         {
             // Remove characters that are not allowed in filenames
@@ -116,17 +269,18 @@ namespace FilumDLWPF
 
             return sanitized;
         }
+
         public void MergeThumbnailWithSong(string songPath, string thumbnailPath, string title, string artist, string album)
         {
             var file = TagLib.File.Create(songPath);
             var pictures = new IPicture[]
             {
             new Picture(thumbnailPath)
-           {
+            {
             Description = "Cover",
             Type = PictureType.FrontCover,
             MimeType = System.Net.Mime.MediaTypeNames.Image.Jpeg
-           }};
+            }};
 
             if (file.Tag != null)
             {
@@ -134,6 +288,10 @@ namespace FilumDLWPF
                 file.Tag.Title = title;
                 file.Tag.Performers = new[] { artist };
                 file.Tag.Album = album;
+                file.Tag.AlbumArtists = new[] { artist };
+                file.Tag.Publisher = "Spotify";
+                file.Tag.Copyright = artist + " 2022-2024, All Rights Reserved";
+                file.Tag.Description = $"Downloaded with Filum-DL Application {GlobalVariables.AppVersion} | Copyright: Blaze Devs 2022-2024, All Rights Reserved ";
                 file.Save();
             }
             else
@@ -141,33 +299,32 @@ namespace FilumDLWPF
                 statusBar.Text = "File.Tag is null. Cannot assign pictures.";
             }
         }
-        public async void GetMultipleTracks(string clientID, string clientSecret, string ID, SpotifyType spotifyType, string fileFormat)
+
+        public async void GetMultipleTracks(string ID, SpotifyType spotifyType, string fileFormat)
         {
             //Authentication
-            var config = SpotifyClientConfig.CreateDefault();
-            var request = new ClientCredentialsRequest(clientID, clientSecret);
-            var response = await new OAuthClient(config).RequestToken(request);
-            if (response.IsExpired == true)
-            {
-                response = await new OAuthClient(config).RequestToken(request);     
-            }
-            
-            //Spotify client configuration
-            var spotify = new SpotifyClient(config.WithToken(response.AccessToken));
-            statusBar.Text = "Spotify client has been authenticated successfully";
+            var auth = new AuthenticationService().GetSpotifyClient();
+            var TrackService = new TrackService(await auth);
+            var AlbumService = new AlbumService(await auth);
+            var PlaylistService = new PlaylistService(await auth);
+            var EpisodeService = new EpisodeService(await auth);
 
             //YouTube Client Configuration
             var youtube = new YoutubeClient();
+
+            statusBar.Text = "Spotify client has been authenticated successfully";
             
             //Get song metadata
             if(spotifyType == SpotifyType.Track)
             {
-                var track = await spotify.Tracks.Get(ID);
-                string song = SanitizeFilename(track.Name);
-                string artist = track.Artists[0].Name;
-                string album = track.Album.Name;
-                SpotifyAPI.Web.Image albumArt = track.Album.Images[0];
-                await previewWindow.SpotifyTrackPreview(ID, SpotifyTrackType.Track, ClientID(), ClientSecret());
+                var track = await TrackService.GetTrack(ID);
+                
+                string song = TrackService.SongName;
+                string artist = TrackService.ArtistName;
+                string album = TrackService.AlbumName;
+                var albumArt = TrackService.AlbumArt;
+
+                await previewWindow.SpotifyTrackPreview(ID, SpotifyTrackType.Track);
                 await Task.Delay(3000);
                 if(GlobalVariables.SpotWindowClicked == true)
                 {
@@ -187,7 +344,7 @@ namespace FilumDLWPF
                         string filepath = dlg.ResultPath;
                     }
                     string thumbPath = dlg.ResultPath + "\\thumbnail.png";
-                    using (var client = new WebClient())
+                    using (client)
                     {
                         client.DownloadFile(new Uri(albumArt.Url), thumbPath);
                     }
@@ -210,11 +367,10 @@ namespace FilumDLWPF
             else if(spotifyType == SpotifyType.Album)
             {
                 //Get album
-                var album = await spotify.Albums.Get(ID);
-                var albumName = SanitizeFilename(album.Name);
-                var artistA = album.Artists[0].Name;
+                var album = await AlbumService.GetAlbum(ID);
+                var albumName = AlbumService.AlbumName;               
 
-                await previewWindow.SpotifyTrackPreview(ID, SpotifyTrackType.Album, ClientID(), ClientSecret());
+                await previewWindow.SpotifyTrackPreview(ID, SpotifyTrackType.Album);
                 await Task.Delay(3000);
 
                 if (GlobalVariables.SpotWindowClicked == true)
@@ -236,14 +392,15 @@ namespace FilumDLWPF
                     foreach (SimpleTrack item in album.Tracks.Items)
                     {
                         string trackID = item.Id;
-                        var track = await spotify.Tracks.Get(trackID);
-                        string song = SanitizeFilename(track.Name);
-                        string artist = track.Artists[0].Name;
-                        SpotifyAPI.Web.Image albumArt = track.Album.Images[0];
-                        string albumA = SanitizeFilename(track.Album.Name);
+                        var track = await TrackService.GetTrack(trackID);
+                        var song = TrackService.SongName;
+                        var artist = TrackService.ArtistName;
+                        var albumArt = TrackService.AlbumArt;
+                        string albumA = TrackService.AlbumName;
+
                         string filepathD = $"{filepathS}\\{artist} - {song}{fileFormat}";
 
-                        await previewWindow.SpotifyTrackPreview(trackID, SpotifyTrackType.Track, ClientID(), ClientSecret());
+                        await previewWindow.SpotifyTrackPreview(trackID, SpotifyTrackType.Track);
                         await Task.Delay(3000);
 
                         if (GlobalVariables.SpotWindowClicked == true)
@@ -258,7 +415,7 @@ namespace FilumDLWPF
                             var streamInfo = new IStreamInfo[] { audioStream };
 
                             string thumbPath = filepathS + "\\thumbnail.png";
-                            using (var client = new WebClient())
+                            using (client)
                             {
                                 client.DownloadFile(new Uri(albumArt.Url), thumbPath);
                             }
@@ -283,10 +440,10 @@ namespace FilumDLWPF
             else if(spotifyType == SpotifyType.Playlist)
             {
                 //Get playlist
-                var playlist = await spotify.Playlists.Get(ID);
-                var playlistName = SanitizeFilename(playlist.Name);
-                var playlistAuthor = playlist.Owner;
-                await previewWindow.SpotifyTrackPreview(ID, SpotifyTrackType.Playlist, ClientID(), ClientSecret());
+                var playlist = await PlaylistService.GetPlaylist(ID);
+                var playlistName = PlaylistService.PlaylistName;
+
+                await previewWindow.SpotifyTrackPreview(ID, SpotifyTrackType.Playlist);
                 await Task.Delay(3000);
 
                 if (GlobalVariables.SpotWindowClicked == true)
@@ -311,13 +468,14 @@ namespace FilumDLWPF
                         if (item.Track is FullTrack track)
                         {
                             string trackID = track.Id;
-                            var trackA = await spotify.Tracks.Get(trackID);
-                            string song = SanitizeFilename(trackA.Name);
-                            string artist = trackA.Artists[0].Name;
-                            string albumA = SanitizeFilename(trackA.Album.Name);
-                            SpotifyAPI.Web.Image albumArt = track.Album.Images[0];
+                            var trackA = await TrackService.GetTrack(trackID);
+                            var song = TrackService.SongName;
+                            var artist = TrackService.ArtistName;
+                            var albumArt = TrackService.AlbumArt;
+                            string albumA = TrackService.AlbumName;
+
                             string filepathD = $"{filepathS}\\{artist} - {song}{fileFormat}";
-                            await previewWindow.SpotifyTrackPreview(trackID, SpotifyTrackType.Track, ClientID(), ClientSecret());
+                            await previewWindow.SpotifyTrackPreview(trackID, SpotifyTrackType.Track);
                             await Task.Delay(3000);
 
                             if (GlobalVariables.SpotWindowClicked == true)
@@ -331,7 +489,7 @@ namespace FilumDLWPF
                                 var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                                 var streamInfo = new IStreamInfo[] { audioStream };
                                 string thumbPath = filepathS + "\\thumbnail.png";
-                                using (var client = new WebClient())
+                                using (client)
                                 {
                                     client.DownloadFile(new Uri(albumArt.Url), thumbPath);
                                 }
@@ -352,12 +510,15 @@ namespace FilumDLWPF
                         {
                             string trackID = episode.Id;
                             // All FullTrack properties are available
-                            var trackA = await spotify.Episodes.Get(trackID);
-                            string episodeName = trackA.Name;
-                            string artist = trackA.Show.Publisher;
-                            SpotifyAPI.Web.Image albumArt = trackA.Images[0];
+                            var trackA = await EpisodeService.GetEpisode(trackID);
+                            var episodeName = EpisodeService.EpisodeName;
+                            var artist = EpisodeService.EpisodeAuthor;
+                            var albumArt = EpisodeService.EpisodeArt;
+
                             string filepathD = $"{filepathS}\\{episodeName}{fileFormat}";
-                            await previewWindow.SpotifyTrackPreview(trackID, SpotifyTrackType.Episode, ClientID(), ClientSecret());
+
+                            await previewWindow.SpotifyTrackPreview(trackID, SpotifyTrackType.Episode);
+
                             await Task.Delay(3000);
 
                             if (GlobalVariables.SpotWindowClicked == true)
@@ -371,7 +532,7 @@ namespace FilumDLWPF
                                 var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                                 var streamInfo = new IStreamInfo[] { audioStream };
                                 string thumbPath = filepathS + "\\thumbnail.png";
-                                using (var client = new WebClient())
+                                using (client)
                                 {
                                     client.DownloadFile(new Uri(albumArt.Url), thumbPath);
                                 }
@@ -533,21 +694,22 @@ namespace FilumDLWPF
             {
                 if (dnType.SelectedItem == Song)
                 {
-                    GetMultipleTracks(ClientID(), ClientSecret(), dlIdSong, SpotifyType.Track, FileFormatSet());
+                    GetMultipleTracks(dlIdSong, SpotifyType.Track, FileFormatSet());
                 }
                 else if (dnType.SelectedItem == Playlist)
                 {
-                    GetMultipleTracks(ClientID(), ClientSecret(), dlIdPlaylist, SpotifyType.Playlist, FileFormatSet());
+                    GetMultipleTracks(dlIdPlaylist, SpotifyType.Playlist, FileFormatSet());
                 }
                 else if (dnType.SelectedItem == Album)
                 {
-                    GetMultipleTracks(ClientID(), ClientSecret(), dlIdAlbum, SpotifyType.Album, FileFormatSet());
+                    GetMultipleTracks(dlIdAlbum, SpotifyType.Album, FileFormatSet());
                 }
             }
             catch(Exception ex)
             {
                 statusBar.Text = ex.Message;
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
             }
         }
 

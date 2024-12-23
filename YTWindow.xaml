@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilumDLWPF"
         mc:Ignorable="d"
-        Title="Filum-DL Application v1.6.0 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
+        Title="Filum-DL Application v1.6.5 - YouTube Downloader" Height="450" Width="800" ResizeMode="NoResize"
         Icon="Resources/youtube.png"
         Background="Aqua"
         >

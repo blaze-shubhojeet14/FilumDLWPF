@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using SpotifyAPI.Web;
 
 namespace FilumDLWPF
 {
@@ -63,34 +52,30 @@ namespace FilumDLWPF
             return sanitized;
         }
          
-        public async Task SpotifyTrackPreview(string trackID, SpotifyTrackType spotifyTrackType, string clientID, string clientSecret)
+        public async Task SpotifyTrackPreview(string trackID, SpotifyTrackType spotifyTrackType)
         {
             try
             {
-                var config = SpotifyClientConfig.CreateDefault();
-                var request = new ClientCredentialsRequest(clientID, clientSecret);
-                var response = await new OAuthClient(config).RequestToken(request);
-                if (response.IsExpired == true)
-                {
-                    response = await new OAuthClient(config).RequestToken(request);
-                }
-
-                //Spotify client configuration
-                var spotify = new SpotifyClient(config.WithToken(response.AccessToken));
+                var auth = new AuthenticationService().GetSpotifyClient();
+                var TrackService = new TrackService(await auth);
+                var AlbumService = new AlbumService(await auth);
+                var PlaylistService = new PlaylistService(await auth);
+                var EpisodeService = new EpisodeService(await auth);
 
                 this.Closed += (s, e) => GlobalVariables.SpotWindowClicked = true;
 
                 if (spotifyTrackType == SpotifyTrackType.Track)
                 {
                     infoHeader.Content = "Track Information";
-                    var track = await spotify.Tracks.Get(trackID);
-                    string song = SanitizeFilename(track.Name);
-                    string artist = track.Artists[0].Name;
-                    string album = track.Album.Name;
+                    var track = await TrackService.GetTrack(trackID);
+                    string song = TrackService.SongName;
+                    string artist = TrackService.ArtistName;
+                    string album = TrackService.AlbumName;
+
                     trackName.Content = "Track Name: " + song;
                     artistName.Content = "Artist Name: " + artist;
                     albumName.Content = "Album Name: " + album;
-                    string coverUrl = track.Album.Images[0].Url;
+                    string coverUrl = TrackService.AlbumArt.Url;
                     coverArt.Source = new BitmapImage(new Uri(coverUrl));
                     await Task.Delay(3000);
                     this.Show();
@@ -98,13 +83,13 @@ namespace FilumDLWPF
                 else if(spotifyTrackType == SpotifyTrackType.Album)
                 {
                     infoHeader.Content = "Album Information";
-                    var album = await spotify.Albums.Get(trackID);
-                    var albumNameA = SanitizeFilename(album.Name);
-                    var artist = album.Artists[0].Name;
+                    var album = await AlbumService.GetAlbum(trackID);
+                    var albumNameA = AlbumService.AlbumName;
+                    var artist = AlbumService.ArtistName;
                     trackName.Content = "Album Name: " + albumNameA;
                     artistName.Content = "Artist Name: " + artist;
                     albumName.Content = "";
-                    string coverUrl = album.Images[0].Url;
+                    string coverUrl = AlbumService.AlbumArt.Url;
                     coverArt.Source = new BitmapImage(new Uri(coverUrl));
                     await Task.Delay(3000);
                     this.Show();
@@ -113,13 +98,13 @@ namespace FilumDLWPF
                 else if(spotifyTrackType == SpotifyTrackType.Playlist)
                 {
                     infoHeader.Content = "Playlist Information";
-                    var playlist = await spotify.Playlists.Get(trackID);
-                    var playlistName = SanitizeFilename(playlist.Name);
-                    var playlistAuthor = playlist.Owner;
+                    var playlist = await PlaylistService.GetPlaylist(trackID);
+                    var playlistName = PlaylistService.PlaylistName;
+                    var playlistAuthor = PlaylistService.PlaylistAuthor;
                     trackName.Content = "Playlist Name: " + playlistName;
                     artistName.Content = "Author Name: " + playlistAuthor;
                     albumName.Content = "";
-                    string coverUrl = playlist.Images[0].Url;
+                    string coverUrl = PlaylistService.PlaylistArt.Url;
                     coverArt.Source = new BitmapImage(new Uri(coverUrl));
                     await Task.Delay(3000);
                     this.Show();
@@ -127,13 +112,13 @@ namespace FilumDLWPF
                 else if(spotifyTrackType == SpotifyTrackType.Episode)
                 {
                     infoHeader.Content = "Episode Information";
-                    var episode = await spotify.Episodes.Get(trackID);
-                    var episodeName = SanitizeFilename(episode.Name);
-                    var episodeAuthor = episode.Show.Publisher;
+                    var episode = await EpisodeService.GetEpisode(trackID);
+                    var episodeName = EpisodeService.EpisodeName;
+                    var episodeAuthor = EpisodeService.EpisodeAuthor;
                     trackName.Content = "Episode Name: " + episodeName;
                     artistName.Content = "Publisher Name: " + episodeAuthor;
                     albumName.Content = "";
-                    string coverUrl = episode.Images[0].Url;
+                    string coverUrl = EpisodeService.EpisodeArt.Url;
                     coverArt.Source = new BitmapImage(new Uri(coverUrl));
                     await Task.Delay(3000);
                     this.Show();
@@ -142,11 +127,9 @@ namespace FilumDLWPF
             }
             catch(Exception e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                
-                
-            }
-           
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                GlobalVariables.SpotWindowClicked = true;
+            }        
         }
 
         private void okBtn_Click(object sender, RoutedEventArgs e)
