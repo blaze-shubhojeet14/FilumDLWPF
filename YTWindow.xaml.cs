@@ -746,7 +746,7 @@ namespace FilumDLWPF
                         bool? msgResult = MessageBoxCustom.ShowDialogBox("Do you want to preview the video before downloading?", "Preview Video", MessageBoxCustom.MessageBoxType.Question);
                         if (msgResult == true)
                         {
-                           videoWindow.VideoPlayer(dlId);
+                           await videoWindow.VideoPlayer(dlId);
                            await Task.Delay(40000);
 
                            if (audioVideo.IsSelected == true)
