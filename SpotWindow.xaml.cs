@@ -201,6 +201,9 @@ namespace FilumDLWPF
 
         public string SpotifyID { get; set; }
 
+        // Static HttpClient is appropriate for a WPF desktop application
+        // It is reused across all instances and properly manages connection pooling
+        // Disposal is not required as it lives for the lifetime of the application
         private static readonly HttpClient httpClient = new HttpClient();
 
         SpotPreviewWindow previewWindow = new SpotPreviewWindow();
@@ -345,8 +348,21 @@ namespace FilumDLWPF
                         string filepath = dlg.ResultPath;
                     }
                     string thumbPath = dlg.ResultPath + "\\thumbnail.png";
-                    var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
-                    await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                    try
+                    {
+                        var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                        await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        statusBar.Text = $"Failed to download album art: {ex.Message}";
+                        MessageBox.Show($"Failed to download album art. Continuing without it.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    catch (IOException ex)
+                    {
+                        statusBar.Text = $"Failed to save album art: {ex.Message}";
+                        MessageBox.Show($"Failed to save album art. Continuing without it.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
 
                     string filepathS = $"{dlg.ResultPath}\\{artist} - {song}{fileFormat}";
 
@@ -414,8 +430,19 @@ namespace FilumDLWPF
                             var streamInfo = new IStreamInfo[] { audioStream };
 
                             string thumbPath = filepathS + "\\thumbnail.png";
-                            var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
-                            await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                            try
+                            {
+                                var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                                await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                            }
+                            catch (HttpRequestException ex)
+                            {
+                                statusBar.Text = $"Failed to download album art: {ex.Message}";
+                            }
+                            catch (IOException ex)
+                            {
+                                statusBar.Text = $"Failed to save album art: {ex.Message}";
+                            }
 
                             statusBar.Text = "Downloading...";
                             await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
@@ -486,8 +513,19 @@ namespace FilumDLWPF
                                 var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                                 var streamInfo = new IStreamInfo[] { audioStream };
                                 string thumbPath = filepathS + "\\thumbnail.png";
-                                var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
-                                await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                                try
+                                {
+                                    var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                                    await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                                }
+                                catch (HttpRequestException ex)
+                                {
+                                    statusBar.Text = $"Failed to download album art: {ex.Message}";
+                                }
+                                catch (IOException ex)
+                                {
+                                    statusBar.Text = $"Failed to save album art: {ex.Message}";
+                                }
 
                                 statusBar.Text = "Downloading...";
                                 await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
@@ -527,8 +565,19 @@ namespace FilumDLWPF
                                 var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                                 var streamInfo = new IStreamInfo[] { audioStream };
                                 string thumbPath = filepathS + "\\thumbnail.png";
-                                var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
-                                await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                                try
+                                {
+                                    var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                                    await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
+                                }
+                                catch (HttpRequestException ex)
+                                {
+                                    statusBar.Text = $"Failed to download album art: {ex.Message}";
+                                }
+                                catch (IOException ex)
+                                {
+                                    statusBar.Text = $"Failed to save album art: {ex.Message}";
+                                }
 
                                 statusBar.Text = "Downloading...";
                                 await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
