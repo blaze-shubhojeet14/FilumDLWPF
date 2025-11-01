@@ -124,7 +124,7 @@ namespace FilumDLWPF
                 }
                 this.Show();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Unable to play the video, please try again later!", "Error Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();

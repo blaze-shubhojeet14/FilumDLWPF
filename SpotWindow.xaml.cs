@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -200,7 +201,7 @@ namespace FilumDLWPF
 
         public string SpotifyID { get; set; }
 
-        WebClient client = new WebClient();
+        private static readonly HttpClient httpClient = new HttpClient();
 
         SpotPreviewWindow previewWindow = new SpotPreviewWindow();
 
@@ -344,10 +345,8 @@ namespace FilumDLWPF
                         string filepath = dlg.ResultPath;
                     }
                     string thumbPath = dlg.ResultPath + "\\thumbnail.png";
-                    using (client)
-                    {
-                        client.DownloadFile(new Uri(albumArt.Url), thumbPath);
-                    }
+                    var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                    await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
 
                     string filepathS = $"{dlg.ResultPath}\\{artist} - {song}{fileFormat}";
 
@@ -415,10 +414,8 @@ namespace FilumDLWPF
                             var streamInfo = new IStreamInfo[] { audioStream };
 
                             string thumbPath = filepathS + "\\thumbnail.png";
-                            using (client)
-                            {
-                                client.DownloadFile(new Uri(albumArt.Url), thumbPath);
-                            }
+                            var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                            await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
 
                             statusBar.Text = "Downloading...";
                             await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
@@ -489,10 +486,8 @@ namespace FilumDLWPF
                                 var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                                 var streamInfo = new IStreamInfo[] { audioStream };
                                 string thumbPath = filepathS + "\\thumbnail.png";
-                                using (client)
-                                {
-                                    client.DownloadFile(new Uri(albumArt.Url), thumbPath);
-                                }
+                                var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                                await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
 
                                 statusBar.Text = "Downloading...";
                                 await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
@@ -532,10 +527,8 @@ namespace FilumDLWPF
                                 var audioStream = streamManifest.GetAudioStreams().GetWithHighestBitrate();
                                 var streamInfo = new IStreamInfo[] { audioStream };
                                 string thumbPath = filepathS + "\\thumbnail.png";
-                                using (client)
-                                {
-                                    client.DownloadFile(new Uri(albumArt.Url), thumbPath);
-                                }
+                                var imageBytes = await httpClient.GetByteArrayAsync(albumArt.Url);
+                                await System.IO.File.WriteAllBytesAsync(thumbPath, imageBytes);
 
                                 statusBar.Text = "Downloading...";
                                 await youtube.Videos.DownloadAsync(streamInfo, new ConversionRequestBuilder(filepathD).Build());
